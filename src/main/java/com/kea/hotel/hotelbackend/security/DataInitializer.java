@@ -18,18 +18,19 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (userRepository.count() == 0) {
+        if (userRepository.findByUsername("admin").isEmpty()) {
             UserAccount admin = new UserAccount();
             admin.setUsername("admin");
             admin.setPasswordHash(passwordEncoder.encode("admin123"));
             admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+        }
 
+        if (userRepository.findByUsername("staff").isEmpty()) {
             UserAccount staff = new UserAccount();
             staff.setUsername("staff");
             staff.setPasswordHash(passwordEncoder.encode("staff123"));
             staff.setRole(Role.STAFF);
-
-            userRepository.save(admin);
             userRepository.save(staff);
         }
     }

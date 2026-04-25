@@ -20,8 +20,33 @@ services:
       timeout: 5s
       retries: 5
 
+  mongodb:
+    image: mongo:7
+    container_name: hotel_mongo_container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - hotel_network
+
+  neo4j:
+    image: neo4j:5
+    container_name: hotel_neo4j_container
+    environment:
+      NEO4J_AUTH: neo4j/yourpassword
+    ports:
+      - "7474:7474"   # Neo4j Browser UI
+      - "7687:7687"   # Bolt protocol
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - hotel_network
+
 volumes:
   mysql_data:
+  mongo_data:
+  neo4j_data:
 
 networks:
   hotel_network:
