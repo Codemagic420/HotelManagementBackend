@@ -4,6 +4,7 @@ import com.kea.hotel.hotelbackend.model.RoomCleaningAssignment;
 import com.kea.hotel.hotelbackend.model.RoomCleaningAssignmentKey;
 import com.kea.hotel.hotelbackend.service.RoomCleaningAssignmentService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,11 +20,13 @@ public class RoomCleaningAssignmentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CLEANER')")
     public List<RoomCleaningAssignment> getAllRoomCleaningAssignments() {
         return service.findAll();
     }
 
     @GetMapping("/{taskId}/{cleanerId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'CLEANER')")
     public ResponseEntity<RoomCleaningAssignment> getRoomCleaningAssignmentById(
             @PathVariable Long taskId,
             @PathVariable Long cleanerId) {
@@ -34,11 +37,13 @@ public class RoomCleaningAssignmentController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public RoomCleaningAssignment createRoomCleaningAssignment(@RequestBody RoomCleaningAssignment assignment) {
         return service.save(assignment);
     }
 
     @PutMapping("/{taskId}/{cleanerId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoomCleaningAssignment> updateRoomCleaningAssignment(
             @PathVariable Long taskId,
             @PathVariable Long cleanerId,
@@ -50,6 +55,7 @@ public class RoomCleaningAssignmentController {
     }
 
     @DeleteMapping("/{taskId}/{cleanerId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRoomCleaningAssignment(
             @PathVariable Long taskId,
             @PathVariable Long cleanerId) {

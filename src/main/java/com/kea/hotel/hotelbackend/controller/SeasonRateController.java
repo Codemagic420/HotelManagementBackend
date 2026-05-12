@@ -3,6 +3,7 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.SeasonRate;
 import com.kea.hotel.hotelbackend.service.SeasonRateService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,11 +31,13 @@ public class SeasonRateController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public SeasonRate createSeasonRate(@RequestBody SeasonRate seasonRate) {
         return service.save(seasonRate);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<SeasonRate> updateSeasonRate(@PathVariable Long id, @RequestBody SeasonRate updated) {
         return service.update(id, updated)
                 .map(ResponseEntity::ok)
@@ -42,6 +45,7 @@ public class SeasonRateController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteSeasonRate(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
