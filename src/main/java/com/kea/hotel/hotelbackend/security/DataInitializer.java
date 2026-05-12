@@ -134,10 +134,17 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initializeUsers() {
+        String adminPassword = System.getenv("MYSQL_ADMIN_PASSWORD") != null ?
+            System.getenv("MYSQL_ADMIN_PASSWORD") : "admin123";
+        String staffPassword = System.getenv("MYSQL_STAFF_PASSWORD") != null ?
+            System.getenv("MYSQL_STAFF_PASSWORD") : "staff123";
+        String cleanerPassword = System.getenv("CLEANER_PASSWORD") != null ?
+            System.getenv("CLEANER_PASSWORD") : "cleaner123";
+
         if (userRepository.findByUsername("admin").isEmpty()) {
             UserAccount admin = new UserAccount();
             admin.setUsername("admin");
-            admin.setPasswordHash(passwordEncoder.encode("admin123"));
+            admin.setPasswordHash(passwordEncoder.encode(adminPassword));
             admin.setRole(Role.ADMIN);
             userRepository.save(admin);
         }
@@ -145,7 +152,7 @@ public class DataInitializer implements ApplicationRunner {
         if (userRepository.findByUsername("staff").isEmpty()) {
             UserAccount staff = new UserAccount();
             staff.setUsername("staff");
-            staff.setPasswordHash(passwordEncoder.encode("staff123"));
+            staff.setPasswordHash(passwordEncoder.encode(staffPassword));
             staff.setRole(Role.STAFF);
             userRepository.save(staff);
         }
@@ -155,7 +162,7 @@ public class DataInitializer implements ApplicationRunner {
             if (userRepository.findByUsername(username).isEmpty()) {
                 UserAccount cleaner = new UserAccount();
                 cleaner.setUsername(username);
-                cleaner.setPasswordHash(passwordEncoder.encode("cleaner123"));
+                cleaner.setPasswordHash(passwordEncoder.encode(cleanerPassword));
                 cleaner.setRole(Role.CLEANER);
                 userRepository.save(cleaner);
             }

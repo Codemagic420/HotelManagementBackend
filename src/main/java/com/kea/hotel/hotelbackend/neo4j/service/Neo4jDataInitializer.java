@@ -49,19 +49,30 @@ public class Neo4jDataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         try {
             System.out.println("🔄 Checking if Neo4j data exists...");
+            System.out.flush();
             long cleanerCount = waitForNeo4jConnection();
             System.out.println("   Found " + cleanerCount + " cleaners in Neo4j");
+            System.out.flush();
 
             if (cleanerCount == 0) {
                 System.out.println("🔄 Initializing Neo4j with graph data...");
+                System.out.flush();
                 initializeRoomTypes();
+                System.out.flush();
                 initializeRooms();
+                System.out.flush();
                 initializeCleaners();
+                System.out.flush();
                 initializeExtraServices();
+                System.out.flush();
                 initializeInventoryItems();
+                System.out.flush();
                 initializeSeasonRates();
+                System.out.flush();
                 initializeGuests();
+                System.out.flush();
                 initializeReservations();
+                System.out.flush();
                 printNeo4jStats();
             } else {
                 System.out.println("✓ Neo4j data already exists, skipping initialization");
@@ -73,6 +84,7 @@ public class Neo4jDataInitializer implements ApplicationRunner {
             System.err.println("   Use POST http://localhost:8080/api/migrate to initialize Neo4j data later");
             System.err.println("   Or GET http://localhost:8080/api/neo4j/diagnostics/status to check Neo4j connection");
             e.printStackTrace();
+            System.err.flush();
         }
     }
 
