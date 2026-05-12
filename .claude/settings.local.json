@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(export JAVA_HOME=\"/c/Program Files/JetBrains/IntelliJ IDEA 2025.3/jbr\")",
+      "Bash(./mvnw clean *)"
+    ]
+  }
+}

@@ -15,9 +15,19 @@ public class Room {
     @Column(unique = true)
     private String roomNumber;
 
-    @Column(nullable = false)
-    private String type;
+    @ManyToOne
+    @JoinColumn(name = "room_type_id", nullable = false)
+    private RoomType roomType;
+
+    @Column(nullable = false, length = 20)
+    private String roomStatus;
+
+    @Column(nullable = false, length = 20)
+    private String cleanStatus;
 
     @Column(nullable = false)
-    private boolean occupied;
+    private Boolean occupied = false;
+
+    @Column(length = 255)
+    private String type;
 }

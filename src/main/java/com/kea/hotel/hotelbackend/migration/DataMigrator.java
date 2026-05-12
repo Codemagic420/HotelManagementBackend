@@ -66,7 +66,7 @@ public class DataMigrator {
                 doc.put("roomId", room.getRoomId());
                 doc.put("roomNumber", room.getRoomNumber());
                 doc.put("type", room.getType());
-                doc.put("occupied", room.isOccupied());
+                doc.put("occupied", room.getOccupied());
                 System.out.println("Saving room document: " + doc);
                 mongoTemplate.save(doc, "rooms");
             }
@@ -111,7 +111,7 @@ public class DataMigrator {
                 Map<String, Object> doc = new HashMap<>();
                 doc.put("billId", bill.getBillId());
                 doc.put("totalAmount", bill.getTotalAmount() != null ? bill.getTotalAmount().toString() : null);
-                doc.put("isPaid", bill.isPaid());
+                doc.put("closedAt", bill.getClosedAt() != null ? bill.getClosedAt().toString() : null);
 
                 Reservation res = bill.getReservation();
                 if (res != null) {
@@ -129,7 +129,7 @@ public class DataMigrator {
                         itemDoc.put("unitPrice", item.getUnitPrice() != null ? item.getUnitPrice().toString() : null);
                         itemDoc.put("lineTotal", item.getLineTotal() != null ? item.getLineTotal().toString() : null);
                         itemDoc.put("postedAt", item.getPostedAt() != null ? item.getPostedAt().toString() : null);
-                        itemDoc.put("amount", item.getAmount() != null ? item.getAmount().toString() : null);
+                        itemDoc.put("lineTotal", item.getLineTotal() != null ? item.getLineTotal().toString() : null);
                         billItems.add(itemDoc);
                     }
                 }

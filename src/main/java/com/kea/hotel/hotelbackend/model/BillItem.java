@@ -16,18 +16,24 @@ public class BillItem {
     private Long billItemId;
 
     @ManyToOne
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id", nullable = false)
     private Bill bill;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String itemType;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 200)
     private String description;
 
-    private int quantity;
+    @Column(nullable = false)
+    private Integer quantity;
+
+    @Column(nullable = false)
     private BigDecimal unitPrice;
+
+    @Column(nullable = false)
     private BigDecimal lineTotal;
-    private LocalDateTime postedAt;
-    private BigDecimal amount;
+
+    @Column(nullable = false)
+    private LocalDateTime postedAt = LocalDateTime.now();
 }

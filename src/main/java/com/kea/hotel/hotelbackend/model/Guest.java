@@ -21,4 +21,10 @@ public class Guest {
 
     @Column(unique = true, nullable = false, length = 150)
     private String email;
+
+    @Column(length = 15)
+    private String phone;
+
+    @Column(length = 4)
+    private String creditCardLast4;
 }

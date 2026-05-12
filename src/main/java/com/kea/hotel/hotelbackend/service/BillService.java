@@ -20,6 +20,10 @@ public class BillService {
         this.billItemRepository = billItemRepository;
     }
 
+    public List<Bill> findAll() {
+        return billRepository.findAll();
+    }
+
     public List<Bill> getAllBills() {
         return billRepository.findAll();
     }
@@ -32,6 +36,10 @@ public class BillService {
         return billRepository.findAll().stream()
                 .filter(bill -> bill.getReservation() != null && bill.getReservation().getReservationId().equals(reservationId))
                 .toList();
+    }
+
+    public Bill save(Bill bill) {
+        return billRepository.save(bill);
     }
 
     public Bill createBill(Bill bill) {
