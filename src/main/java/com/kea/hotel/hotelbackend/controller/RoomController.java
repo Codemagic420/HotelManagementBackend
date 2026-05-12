@@ -3,7 +3,6 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.service.RoomService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +30,11 @@ public class RoomController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public Room createRoom(@RequestBody Room room) {
         return service.save(room);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room updated) {
         return service.update(id, updated)
                 .map(ResponseEntity::ok)
@@ -45,7 +42,6 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

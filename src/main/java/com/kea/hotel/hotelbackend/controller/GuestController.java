@@ -3,7 +3,6 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.Guest;
 import com.kea.hotel.hotelbackend.service.GuestService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +18,11 @@ public class GuestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public List<Guest> getAllGuests() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Guest> getGuestById(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
@@ -33,13 +30,11 @@ public class GuestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public Guest createGuest(@RequestBody Guest guest) {
         return service.save(guest);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Guest> updateGuest(@PathVariable Long id, @RequestBody Guest updated) {
         return service.update(id, updated)
                 .map(ResponseEntity::ok)
@@ -47,7 +42,6 @@ public class GuestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteGuest(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

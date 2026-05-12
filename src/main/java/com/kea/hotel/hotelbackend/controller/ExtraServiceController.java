@@ -3,7 +3,6 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.ExtraService;
 import com.kea.hotel.hotelbackend.service.ExtraServiceService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,13 +30,11 @@ public class ExtraServiceController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ExtraService createExtraService(@RequestBody ExtraService service) {
         return this.service.save(service);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ExtraService> updateExtraService(@PathVariable Long id, @RequestBody ExtraService updated) {
         return service.update(id, updated)
                 .map(ResponseEntity::ok)
@@ -45,7 +42,6 @@ public class ExtraServiceController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteExtraService(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

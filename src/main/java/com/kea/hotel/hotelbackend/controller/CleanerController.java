@@ -3,7 +3,6 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.Cleaner;
 import com.kea.hotel.hotelbackend.service.CleanerService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,13 +18,11 @@ public class CleanerController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public List<Cleaner> getAllCleaners() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<Cleaner> getCleanerById(@PathVariable Long id) {
         return service.findById(id)
                 .map(ResponseEntity::ok)
@@ -33,13 +30,11 @@ public class CleanerController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public Cleaner createCleaner(@RequestBody Cleaner cleaner) {
         return service.save(cleaner);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Cleaner> updateCleaner(@PathVariable Long id, @RequestBody Cleaner updated) {
         return service.update(id, updated)
                 .map(ResponseEntity::ok)
@@ -47,7 +42,6 @@ public class CleanerController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCleaner(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
