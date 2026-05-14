@@ -12,6 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://localhost:3000",    // React/Node dev server
+                    "http://127.0.0.1:3001",    // Loopback IP
                     "http://localhost:5173",    // Vite dev server
                     "http://localhost:8000"     // Alternative
                 )
