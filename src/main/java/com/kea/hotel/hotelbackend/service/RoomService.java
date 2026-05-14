@@ -32,7 +32,7 @@ public class RoomService {
         return repo.findById(id).map(existing -> {
             existing.setRoomNumber(updated.getRoomNumber());
             existing.setType(updated.getType());
-            existing.setOccupied(updated.isOccupied());
+            existing.setOccupied(updated.getOccupied());
             return repo.save(existing);
         });
     }
