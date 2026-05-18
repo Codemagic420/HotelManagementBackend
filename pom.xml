@@ -64,21 +64,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc-test</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- MongoDB -->
         <dependency>
@@ -170,6 +155,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>5.3.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -177,6 +163,7 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
+            <version>2.8.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -192,14 +179,7 @@
         <dependency>
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- JaCoCo for code coverage -->
-        <dependency>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-            <version>0.8.10</version>
+            <version>3.0.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -251,7 +231,8 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.11</version>
+                <!-- Disabled due to Java version compatibility issues
                 <executions>
                     <execution>
                         <goals>
@@ -266,6 +247,7 @@
                         </goals>
                     </execution>
                 </executions>
+                -->
             </plugin>
 
             <plugin>

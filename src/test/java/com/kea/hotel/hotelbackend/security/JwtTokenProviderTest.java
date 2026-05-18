@@ -31,7 +31,7 @@ class JwtTokenProviderTest {
     @Test
     @DisplayName("Should generate valid JWT token")
     void testGenerateToken() {
-        testToken = jwtTokenProvider.generateToken(testUsername);
+        testToken = jwtTokenProvider.generateTokenFromUsername(testUsername);
 
         assertThat(testToken).isNotNull().isNotBlank();
         assertThat(testToken.split("\\.")).hasSize(3); // JWT has 3 parts
@@ -40,7 +40,7 @@ class JwtTokenProviderTest {
     @Test
     @DisplayName("Should extract username from valid token")
     void testGetUsernameFromToken() {
-        testToken = jwtTokenProvider.generateToken(testUsername);
+        testToken = jwtTokenProvider.generateTokenFromUsername(testUsername);
 
         String extractedUsername = jwtTokenProvider.getUsernameFromToken(testToken);
 
@@ -50,7 +50,7 @@ class JwtTokenProviderTest {
     @Test
     @DisplayName("Should validate token successfully")
     void testValidateToken() {
-        testToken = jwtTokenProvider.generateToken(testUsername);
+        testToken = jwtTokenProvider.generateTokenFromUsername(testUsername);
 
         boolean isValid = jwtTokenProvider.validateToken(testToken);
 
@@ -72,7 +72,7 @@ class JwtTokenProviderTest {
     void testExpiredToken() {
         // This test would require mocking time or creating an expired token
         // For now, verify the token has expiration time
-        testToken = jwtTokenProvider.generateToken(testUsername);
+        testToken = jwtTokenProvider.generateTokenFromUsername(testUsername);
 
         assertThat(testToken).isNotNull();
     }
@@ -90,8 +90,8 @@ class JwtTokenProviderTest {
     @Test
     @DisplayName("Should generate different tokens for different usernames")
     void testDifferentTokensForDifferentUsers() {
-        String token1 = jwtTokenProvider.generateToken("user1");
-        String token2 = jwtTokenProvider.generateToken("user2");
+        String token1 = jwtTokenProvider.generateTokenFromUsername("user1");
+        String token2 = jwtTokenProvider.generateTokenFromUsername("user2");
 
         assertThat(token1).isNotEqualTo(token2);
         assertThat(jwtTokenProvider.getUsernameFromToken(token1)).isEqualTo("user1");
@@ -102,7 +102,7 @@ class JwtTokenProviderTest {
     @DisplayName("Should handle special characters in username")
     void testSpecialCharactersInUsername() {
         String specialUsername = "user.special+test@domain";
-        String token = jwtTokenProvider.generateToken(specialUsername);
+        String token = jwtTokenProvider.generateTokenFromUsername(specialUsername);
 
         assertThat(jwtTokenProvider.getUsernameFromToken(token)).isEqualTo(specialUsername);
     }

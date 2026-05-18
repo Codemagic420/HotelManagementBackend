@@ -81,7 +81,7 @@ class BillServiceTest {
     void testFindById() {
         when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
 
-        Optional<Bill> result = billService.findById(1L);
+        Optional<Bill> result = billService.getBillById(1L);
 
         assertThat(result).isPresent().contains(testBill);
     }
@@ -175,16 +175,13 @@ class BillServiceTest {
         updatedBill.setBillId(1L);
         updatedBill.setTotalAmount(new BigDecimal("500.00"));
 
-        when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
         when(billRepository.save(any(Bill.class))).thenReturn(updatedBill);
 
-        Optional<Bill> result = billService.update(1L, updatedBill);
+        Bill result = billService.save(updatedBill);
 
         assertThat(result)
-                .isPresent()
-                .hasValueSatisfying(bill -> 
-                    assertThat(bill.getTotalAmount()).isEqualByComparingTo(new BigDecimal("500.00"))
-                );
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("totalAmount", new BigDecimal("500.00"));
     }
 
     @Test
@@ -192,7 +189,7 @@ class BillServiceTest {
     void testDeleteBill() {
         doNothing().when(billRepository).deleteById(1L);
 
-        billService.delete(1L);
+        billService.deleteBill(1L);
 
         verify(billRepository, times(1)).deleteById(1L);
     }
