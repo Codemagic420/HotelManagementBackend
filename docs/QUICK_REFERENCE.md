@@ -301,7 +301,7 @@ Trigger: Push to main/develop or PR
 
 Pipeline:
   1. Checkout code
-  2. Setup JDK 17
+  2. Setup JDK 21
   3. Run unit tests (5-7 min)
   4. Run integration tests (8-12 min)
   5. Generate coverage

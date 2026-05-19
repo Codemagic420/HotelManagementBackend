@@ -6,8 +6,8 @@ Complete setup guide for running the Hotel Management Backend with MySQL, MongoD
 
 - Docker & Docker Compose installed
 - Git
-- Java 17+
-- Maven 3.8+
+- Java 21+ (LTS)
+- Maven 3.9+
 - Node.js (for frontend team)
 
 ## Quick Start (5 minutes)
