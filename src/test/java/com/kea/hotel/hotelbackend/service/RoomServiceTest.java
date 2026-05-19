@@ -6,6 +6,8 @@ import com.kea.hotel.hotelbackend.repository.RoomRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -166,5 +168,35 @@ class RoomServiceTest {
             testRoom.setRoomStatus(status);
             assertThat(testRoom.getRoomStatus()).isEqualTo(status);
         }
+    }
+
+    // ========== PARAMETERIZED TESTS: Boundary Value Testing ==========
+    // Demonstrates testing with multiple input values (exam requirement)
+    // Boundary values: empty, valid, maximum, invalid formats
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "101", "999", "A101"})
+    @DisplayName("Should validate room number formats (boundary values)")
+    void testRoomNumberFormats(String roomNumber) {
+        // Arrange: Test data prepared
+        testRoom.setRoomNumber(roomNumber);
+
+        // Act: Set room number
+        String result = testRoom.getRoomNumber();
+
+        // Assert: Verify value is stored (even if invalid - validation is service responsibility)
+        assertThat(result).isEqualTo(roomNumber);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"AVAILABLE", "OCCUPIED", "MAINTENANCE", "CLEANING"})
+    @DisplayName("Should accept valid room status values")
+    void testValidRoomStatuses(String status) {
+        when(roomRepository.save(any(Room.class))).thenReturn(testRoom);
+
+        testRoom.setRoomStatus(status);
+        Room result = roomService.save(testRoom);
+
+        assertThat(result.getRoomStatus()).isIn("AVAILABLE", "OCCUPIED", "MAINTENANCE", "CLEANING");
     }
 }

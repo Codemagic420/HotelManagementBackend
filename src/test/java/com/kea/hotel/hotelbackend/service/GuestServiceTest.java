@@ -44,14 +44,16 @@ class GuestServiceTest {
     @Test
     @DisplayName("Should retrieve all guests")
     void testFindAll() {
+        // ARRANGE: Setup test data with mock repository
         Guest guest2 = new Guest();
         guest2.setGuestId(2L);
         guest2.setEmail("john@example.com");
-
         when(guestRepository.findAll()).thenReturn(Arrays.asList(testGuest, guest2));
 
+        // ACT: Call service method
         List<Guest> result = guestService.findAll();
 
+        // ASSERT: Verify results and mock interactions
         assertThat(result).hasSize(2).contains(testGuest, guest2);
         verify(guestRepository, times(1)).findAll();
     }
@@ -59,10 +61,13 @@ class GuestServiceTest {
     @Test
     @DisplayName("Should retrieve guest by ID")
     void testFindById() {
+        // ARRANGE: Setup mock to return guest
         when(guestRepository.findById(1L)).thenReturn(Optional.of(testGuest));
 
+        // ACT: Call service
         Optional<Guest> result = guestService.findById(1L);
 
+        // ASSERT: Verify guest is present with correct data
         assertThat(result)
                 .isPresent()
                 .hasValueSatisfying(guest -> {
