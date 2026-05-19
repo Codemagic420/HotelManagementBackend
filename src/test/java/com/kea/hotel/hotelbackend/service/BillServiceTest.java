@@ -115,17 +115,19 @@ class BillServiceTest {
     @Test
     @DisplayName("Should add bill item and update total")
     void testAddItemToBill() {
-        List<BillItem> billItems = new ArrayList<>();
-        billItems.add(testBillItem);
+    // Arrange
+    when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
+    when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
 
-        when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
-        when(billItemRepository.save(testBillItem)).thenReturn(testBillItem);
+    // Act - Call your actual service implementation!
+    // (Adjust the method name and parameters to match your actual BillService class)
+    Bill result = billService.addItemToBill(1L, testBillItem);
 
-        // Add item logic
-        BigDecimal newTotal = testBill.getTotalAmount().add(testBillItem.getLineTotal());
-
-        assertThat(newTotal).isEqualByComparingTo(new BigDecimal("300.00"));
-    }
+    // Assert
+    assertThat(result).isNotNull();
+    verify(billRepository, times(1)).findById(1L);
+    verify(billItemRepository, times(1)).save(testBillItem);
+}
 
     @Test
     @DisplayName("Should calculate multiple bill items total correctly")
