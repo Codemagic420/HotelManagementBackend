@@ -4,7 +4,7 @@ A Spring Boot REST API for managing hotel guests, rooms, and reservations — wi
 
 ## Prerequisites
 
-- Java 17
+- Java 21 LTS
 - Maven (or use the included `./mvnw` wrapper)
 - MySQL 8
 - MongoDB

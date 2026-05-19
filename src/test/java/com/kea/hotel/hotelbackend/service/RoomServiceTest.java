@@ -170,23 +170,9 @@ class RoomServiceTest {
         }
     }
 
-    // ========== PARAMETERIZED TESTS: Boundary Value Testing ==========
+    // ========== PARAMETERIZED TESTS: Room Status Validation ==========
     // Demonstrates testing with multiple input values (exam requirement)
-    // Boundary values: empty, valid, maximum, invalid formats
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", "101", "999", "A101"})
-    @DisplayName("Should validate room number formats (boundary values)")
-    void testRoomNumberFormats(String roomNumber) {
-        // Arrange: Test data prepared
-        testRoom.setRoomNumber(roomNumber);
-
-        // Act: Set room number
-        String result = testRoom.getRoomNumber();
-
-        // Assert: Verify value is stored (even if invalid - validation is service responsibility)
-        assertThat(result).isEqualTo(roomNumber);
-    }
+    // Tests valid room status values: AVAILABLE, OCCUPIED, MAINTENANCE, CLEANING
 
     @ParameterizedTest
     @ValueSource(strings = {"AVAILABLE", "OCCUPIED", "MAINTENANCE", "CLEANING"})

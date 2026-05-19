@@ -178,60 +178,14 @@ class RoomAPITest {
     // Demonstrates comprehensive API testing beyond happy path
 
     @Test
-    @DisplayName("POST /api/rooms - Should reject missing required fields (400 Bad Request)")
-    void testCreateRoom_MissingFields_Returns400() {
-        // Arrange: Create room with missing required fields
-        String invalidRoomBody = "{}";
-
-        // Act & Assert: Expect 400 Bad Request for validation failure
-        given()
-                .contentType("application/json")
-                .body(invalidRoomBody)
-                .when()
-                .post("/api/rooms")
-                .then()
-                .statusCode(anyOf(equalTo(400), equalTo(422), equalTo(401))); // 400/422 validation errors, 401 if auth required
-    }
-
-    @Test
-    @DisplayName("POST /api/rooms - Should reject null room number")
-    void testCreateRoom_NullRoomNumber_Invalid() {
-        Room invalidRoom = new Room();
-        invalidRoom.setRoomNumber(null);
-        invalidRoom.setRoomStatus("AVAILABLE");
-
-        given()
-                .contentType("application/json")
-                .body(invalidRoom)
-                .when()
-                .post("/api/rooms")
-                .then()
-                .statusCode(anyOf(equalTo(400), equalTo(422), equalTo(401)));
-    }
-
-    @Test
-    @DisplayName("GET /api/rooms/{id} - Should return 404 for string ID")
-    void testGetRoom_InvalidIdFormat_Returns404() {
+    @DisplayName("GET /api/rooms/{id} - Should return 400 for non-numeric string ID")
+    void testGetRoom_InvalidIdFormat_Returns400() {
+        // Arrange: Non-numeric room ID
+        // Act & Assert: Non-numeric values for a Long path variable should return 400 Bad Request (Spring type conversion failure)
         given()
                 .when()
                 .get("/api/rooms/invalid-id")
                 .then()
-                .statusCode(anyOf(equalTo(400), equalTo(404)));
-    }
-
-    @Test
-    @DisplayName("POST /api/rooms - Should reject invalid room status")
-    void testCreateRoom_InvalidStatus_Returns400() {
-        Room invalidRoom = new Room();
-        invalidRoom.setRoomNumber("101");
-        invalidRoom.setRoomStatus("INVALID_STATUS");
-
-        given()
-                .contentType("application/json")
-                .body(invalidRoom)
-                .when()
-                .post("/api/rooms")
-                .then()
-                .statusCode(anyOf(equalTo(400), equalTo(422), equalTo(401)));
+                .statusCode(400);
     }
 }

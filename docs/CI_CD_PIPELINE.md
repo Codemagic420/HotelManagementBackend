@@ -66,7 +66,7 @@ test:
 #### Step-by-Step Execution
 
 ```
-1. Set up JDK 17 (Temurin)
+1. Set up JDK 21 (Corretto or Eclipse Temurin)
    └─ Hash cache keys for Maven
    
 2. Run Unit Tests
@@ -201,7 +201,7 @@ on:
 
 ```yaml
 env:
-  JAVA_VERSION: 17
+  JAVA_VERSION: 21
   MAVEN_VERSION: 3.8+
   MYSQL_DOCKER_IMAGE: mysql:8.0
 ```

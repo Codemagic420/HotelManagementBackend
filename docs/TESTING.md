@@ -447,7 +447,7 @@ mvn site
 
 ```yaml
 test:
-  - Set up JDK 17
+  - Set up JDK 21 (Corretto recommended)
   - Run Unit Tests
   - Run Integration Tests
   - Generate Test Report
