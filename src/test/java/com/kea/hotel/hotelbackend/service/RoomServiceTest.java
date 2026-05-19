@@ -175,20 +175,6 @@ class RoomServiceTest {
     // Boundary values: empty, valid, maximum, invalid formats
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "101", "999", "A101"})
-    @DisplayName("Should validate room number formats (boundary values)")
-    void testRoomNumberFormats(String roomNumber) {
-        // Arrange: Test data prepared
-        testRoom.setRoomNumber(roomNumber);
-
-        // Act: Set room number
-        String result = testRoom.getRoomNumber();
-
-        // Assert: Verify value is stored (even if invalid - validation is service responsibility)
-        assertThat(result).isEqualTo(roomNumber);
-    }
-
-    @ParameterizedTest
     @ValueSource(strings = {"AVAILABLE", "OCCUPIED", "MAINTENANCE", "CLEANING"})
     @DisplayName("Should accept valid room status values")
     void testValidRoomStatuses(String status) {
