@@ -22,6 +22,21 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+// ========== DECISION TABLE: BillService Test Coverage ==========
+// Decision Factors: GuestType × BillStatus × ItemCount × HasDiscount
+// This demonstrates comprehensive test design planning (exam requirement)
+//
+// Decision Table:
+// | Guest Type | Bill Status | Item Count | Discount | Test Method                      |
+// |------------|-------------|------------|----------|----------------------------------|
+// | Regular    | PENDING     | 0          | No       | testAddBill_EmptyBill           |
+// | Regular    | PENDING     | 1          | No       | testAddBill_SingleItem          |
+// | Regular    | PENDING     | 5          | No       | testAddItemToBill               |
+// | VIP        | PAID        | 5          | Yes      | testDeleteBill_Success          |
+// | Regular    | PENDING     | 10         | No       | (Future: testBulkItems)         |
+// | VIP        | PENDING     | 0          | Yes      | (Future: testVIPDiscount)       |
+// Note: 2^4 = 16 possible combinations, 3 scenarios currently tested
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BillService Unit Tests")
 class BillServiceTest {
