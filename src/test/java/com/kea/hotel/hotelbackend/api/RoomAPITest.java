@@ -13,6 +13,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 
 import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.equalTo;
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 
@@ -85,9 +86,7 @@ class RoomAPITest {
                 .when()
                 .post("/api/rooms")
                 .then()
-                .statusCode(
-                    anyOf(401, 403, 500) // Unauthorized, Forbidden, or Internal Server Error if not yet authed
-                );
+                .statusCode(anyOf(equalTo(401), equalTo(403), equalTo(500))); // Unauthorized, Forbidden, or Internal Server Error if not yet authed
     }
 
     @Test

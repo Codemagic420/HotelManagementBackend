@@ -148,13 +148,13 @@ class RoomServiceTest {
     @Test
     @DisplayName("Should track room occupancy state changes")
     void testOccupancyStateChange() {
-        assertThat(testRoom.isOccupied()).isFalse();
+        assertThat(testRoom.getOccupied()).isFalse();
 
         testRoom.setOccupied(true);
-        assertThat(testRoom.isOccupied()).isTrue();
+        assertThat(testRoom.getOccupied()).isTrue();
 
         testRoom.setOccupied(false);
-        assertThat(testRoom.isOccupied()).isFalse();
+        assertThat(testRoom.getOccupied()).isFalse();
     }
 
     @Test
