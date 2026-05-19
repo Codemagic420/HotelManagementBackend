@@ -32,7 +32,7 @@ services:
 
     # Port mapping: host:container
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_PORT:-3307}:3306"
 
     # Volume mounts for persistence and initialization
     volumes:

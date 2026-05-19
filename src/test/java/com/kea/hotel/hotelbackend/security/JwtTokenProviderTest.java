@@ -5,13 +5,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @TestPropertySource(properties = {
-    "app.jwt.secret=test-secret-key-that-is-long-enough-for-hs512",
+    "app.jwt.secret=test-secret-key-that-is-long-enough-for-hs512-and-more-test-secret-key-long-secure-key",
     "app.jwt.expiration=86400000"
 })
 @DisplayName("JWT Security Tests")
