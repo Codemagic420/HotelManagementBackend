@@ -178,14 +178,14 @@ class RoomAPITest {
     // Demonstrates comprehensive API testing beyond happy path
 
     @Test
-    @DisplayName("GET /api/rooms/{id} - Should return 404 for non-numeric string ID")
-    void testGetRoom_InvalidIdFormat_Returns404() {
+    @DisplayName("GET /api/rooms/{id} - Should return 400 for non-numeric string ID")
+    void testGetRoom_InvalidIdFormat_Returns400() {
         // Arrange: Non-numeric room ID
-        // Act & Assert: String IDs should return 400 or 404 depending on validation layer
+        // Act & Assert: Non-numeric values for a Long path variable should return 400 Bad Request (Spring type conversion failure)
         given()
                 .when()
                 .get("/api/rooms/invalid-id")
                 .then()
-                .statusCode(anyOf(equalTo(400), equalTo(404)));
+                .statusCode(400);
     }
 }

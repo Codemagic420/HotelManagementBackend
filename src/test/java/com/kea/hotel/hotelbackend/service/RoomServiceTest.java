@@ -170,9 +170,9 @@ class RoomServiceTest {
         }
     }
 
-    // ========== PARAMETERIZED TESTS: Boundary Value Testing ==========
+    // ========== PARAMETERIZED TESTS: Room Status Validation ==========
     // Demonstrates testing with multiple input values (exam requirement)
-    // Boundary values: empty, valid, maximum, invalid formats
+    // Tests valid room status values: AVAILABLE, OCCUPIED, MAINTENANCE, CLEANING
 
     @ParameterizedTest
     @ValueSource(strings = {"AVAILABLE", "OCCUPIED", "MAINTENANCE", "CLEANING"})
