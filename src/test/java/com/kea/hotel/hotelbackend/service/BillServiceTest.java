@@ -113,18 +113,18 @@ class BillServiceTest {
     }
 
     @Test
-    @DisplayName("Should add bill item and update total")
-    void testAddItemToBill() {
-        List<BillItem> billItems = new ArrayList<>();
-        billItems.add(testBillItem);
-
+    @DisplayName("Should add bill item to bill")
+    void testAddItemToBillSavesItemForBill() {
+        // Arrange
         when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
-        when(billItemRepository.save(testBillItem)).thenReturn(testBillItem);
+        when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
 
-        // Add item logic
-        BigDecimal newTotal = testBill.getTotalAmount().add(testBillItem.getLineTotal());
+        // Act - Call service method to add item to bill
+        billService.addItemToBill(1L, testBillItem);
 
-        assertThat(newTotal).isEqualByComparingTo(new BigDecimal("300.00"));
+        // Assert - Verify interactions occurred
+        verify(billRepository, times(1)).findById(1L);
+        verify(billItemRepository, times(1)).save(any(BillItem.class));
     }
 
     @Test

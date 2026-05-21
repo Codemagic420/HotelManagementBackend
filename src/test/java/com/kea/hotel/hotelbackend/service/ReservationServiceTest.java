@@ -183,14 +183,16 @@ class ReservationServiceTest {
         assertThat(testReservation.getCheckOutDate()).isAfter(testReservation.getCheckInDate());
     }
 
-    @Test
+   @Test
     @DisplayName("Should delete reservation successfully")
     void testDelete() {
-        doNothing().when(reservationRepository).deleteById(1L);
-        when(reservationRepository.existsById(1L)).thenReturn(true);
+    // Arrange
+    doNothing().when(reservationRepository).deleteById(1L);
 
-        reservationService.delete(1L);
+    // Act
+    reservationService.delete(1L);
 
-        verify(reservationRepository, times(1)).deleteById(1L);
-    }
+    // Assert
+    verify(reservationRepository, times(1)).deleteById(1L);
+}
 }
