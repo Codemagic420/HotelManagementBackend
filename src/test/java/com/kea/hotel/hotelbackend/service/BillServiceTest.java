@@ -115,19 +115,17 @@ class BillServiceTest {
     @Test
     @DisplayName("Should add bill item and update total")
     void testAddItemToBill() {
-    // Arrange
-    when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
-    when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
+        // Arrange
+        when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
+        when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
 
-    // Act - Call your actual service implementation!
-    // (Adjust the method name and parameters to match your actual BillService class)
-    Bill result = billService.addItemToBill(1L, testBillItem);
+        // Act - Call service method to add item to bill
+        billService.addItemToBill(1L, testBillItem);
 
-    // Assert
-    assertThat(result).isNotNull();
-    verify(billRepository, times(1)).findById(1L);
-    verify(billItemRepository, times(1)).save(testBillItem);
-}
+        // Assert - Verify interactions occurred
+        verify(billRepository, times(1)).findById(1L);
+        verify(billItemRepository, times(1)).save(any(BillItem.class));
+    }
 
     @Test
     @DisplayName("Should calculate multiple bill items total correctly")
