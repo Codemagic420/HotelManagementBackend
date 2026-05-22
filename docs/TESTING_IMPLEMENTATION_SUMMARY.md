@@ -108,32 +108,27 @@ Endpoint Coverage: 14 controllers
 
 ### 4. API Tests (12+ tests)
 
-#### REST Assured Test Suite
+#### MockMvc API Test Suite
 
 ```
-✅ RoomAPITest (12 tests)
+✅ RoomAPITest (5 tests)
   - Status code validation
   - Content-type verification
   - Response structure validation
-  - CORS header checking
-  - Performance baseline testing
-  - Authentication requirement verification
+  - Public room create request validation
   - OpenAPI spec accessibility
 
-Total API Tests: 12+
-Average Duration: 1.1s per test
-Endpoints Tested: 8+
+Total API Tests: 5+
+Average Duration: 18s per class run (full Spring context)
+Endpoints Tested: 3+
 ```
 
 **API Test Coverage:**
 ```
 ✅ GET /api/rooms               - 200 OK
 ✅ GET /api/rooms/{id}          - 200 OK or 404
-✅ POST /api/rooms              - Requires Auth
-✅ PUT /api/rooms/{id}          - Requires Auth
-✅ DELETE /api/rooms/{id}       - Requires Auth
-✅ POST /api/auth/login         - 200 OK or 401
-✅ OPTIONS /api/**              - CORS preflight
+✅ POST /api/rooms              - Public create request
+✅ GET /api/auth/login          - handled separately in security tests
 ✅ GET /v3/api-docs             - OpenAPI spec
 ```
 

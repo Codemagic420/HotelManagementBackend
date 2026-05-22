@@ -1,0 +1,38 @@
+name: Token Compatibility Check
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ appmod/security-fix-20260521101200 ]
+
+jobs:
+  token-compat-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run token compatibility scan
+        run: |
+          set -e
+          echo "Scanning repository for potential token-handling issues..."
+
+          echo "\n1) Look for direct references to the GitHub REST API or Authorization headers"
+          grep -R --line-number -n -E "api\.github\.com|Authorization:|authorization:" || true
+
+          echo "\n2) Look for explicit token manipulation (length/substr/substring/slice)"
+          grep -R --line-number -n -E "token\.|token\W+length|\.substring\(|\.substr\(|\.slice\(" || true
+
+          echo "\n3) Look for hardcoded token-like patterns (ghs_ prefix)"
+          grep -R --line-number -n -E "ghs_[A-Za-z0-9_-]{10,}" || true
+
+          echo "\n4) Search for use of secrets that could be installation tokens"
+          grep -R --line-number -n -E "secrets\.|GITHUB_TOKEN|SNYK_TOKEN|SLACK_WEBHOOK|APP_INSTALLATION|INSTALLATION_TOKEN" || true
+
+          echo "\nScan complete. Please review any matches above for fixed-length assumptions or manual token parsing."
+
+      - name: Upload scan output
+        if: always()
+        run: |
+          echo "Scan completed" > token-compat-scan.txt
+        # (Optional) Could upload as artifact if desired

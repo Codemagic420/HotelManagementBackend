@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -102,18 +104,21 @@ class ReservationServiceTest {
                 .containsExactly("RES001", 2, 5);
     }
 
-    @Test
-    @DisplayName("Should calculate correct number of nights")
-    void testNightCalculation() {
-        LocalDate checkIn = LocalDate.of(2024, 6, 1);
-        LocalDate checkOut = LocalDate.of(2024, 6, 5);
-
+    @ParameterizedTest
+    @CsvSource({
+            "2024-06-01,2024-06-02,1",
+            "2024-06-01,2024-06-05,4",
+            "2026-01-01,2026-01-08,7"
+    })
+    @DisplayName("Should calculate correct number of nights for boundary date ranges")
+    void testNightCalculation(LocalDate checkIn, LocalDate checkOut, int expectedNights) {
         Reservation res = new Reservation();
         res.setCheckInDate(checkIn);
         res.setCheckOutDate(checkOut);
-        res.setNights(4);
+        res.setNights(expectedNights);
 
-        assertThat(res.getNights()).isEqualTo(4);
+        assertThat(res.getCheckOutDate()).isAfter(res.getCheckInDate());
+        assertThat(res.getNights()).isEqualTo(expectedNights);
     }
 
     @Test

@@ -42,10 +42,10 @@ Unit Tests (55%)
 | Assertions | AssertJ | 3.x |
 | Integration | Spring Boot Test | 4.0.5 |
 | Mock MVC | spring-test | 6.0+ |
-| API Testing | REST Assured | Latest |
+| API Testing | MockMvc + Spring Boot Test | Latest |
 | E2E Testing | Selenium | 4.15+ |
 | Performance | JMeter | 5.x |
-| Coverage | JaCoCo | 0.8.10 |
+| Coverage | JaCoCo | 0.8.13 |
 
 ---
 
@@ -204,19 +204,17 @@ mvn failsafe:integration-test
 ## API Tests
 
 ### Purpose
-API tests verify HTTP endpoints with realistic request/response scenarios using REST Assured.
+API tests verify HTTP endpoints with realistic request/response scenarios using MockMvc and Spring Boot Test.
 
 ### Class: `RoomAPITest`
 
 **Test Coverage:**
 
 ```java
-✅ HTTP Status Codes (200, 404, 401, 500)
+✅ HTTP Status Codes (200, 404, 2xx for valid create)
 ✅ Content-Type validation (application/json)
 ✅ Response structure and formatting
-✅ CORS headers validation
-✅ Performance baseline (< 5 seconds)
-✅ Authentication requirements
+✅ Public room create request validation
 ✅ OpenAPI specification availability
 ```
 
@@ -225,23 +223,16 @@ API tests verify HTTP endpoints with realistic request/response scenarios using 
 ```java
 @Test
 void testGetRooms_StatusCode() {
-    given()
-        .when()
-        .get("/api/rooms")
-        .then()
-        .statusCode(200);
+  mockMvc.perform(get("/api/rooms"))
+    .andExpect(status().isOk());
 }
 
 @Test
-void testLogin_ReturnsToken() {
-    given()
-        .contentType("application/json")
-        .body(loginRequest)
-        .when()
-        .post("/api/auth/login")
-        .then()
-        .statusCode(anyOf(200, 401))
-        .body("token", notNullValue());
+void testCreateRoom_PublicCreate() {
+  mockMvc.perform(post("/api/rooms")
+      .contentType("application/json")
+      .content(validRoomJson))
+    .andExpect(status().is2xxSuccessful());
 }
 ```
 
