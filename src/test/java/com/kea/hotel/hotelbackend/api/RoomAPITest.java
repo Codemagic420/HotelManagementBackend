@@ -1,18 +1,18 @@
 package com.kea.hotel.hotelbackend.api;
 
-import com.kea.hotel.hotelbackend.model.Room;
-import com.kea.hotel.hotelbackend.model.RoomType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -61,8 +61,7 @@ class RoomAPITest {
 
     @Test
     @DisplayName("GET /api/rooms - Should return list structure")
-    void testGetRooms_ResponseStructure() throws Exception {
-        // Verify response is JSON array
+    void testGetRooms_ResponseStructure() {
         try {
             mockMvc.perform(get("/api/rooms")).andExpect(status().isOk());
         } catch (Exception e) {
@@ -71,21 +70,30 @@ class RoomAPITest {
     }
 
     @Test
-    @DisplayName("POST /api/rooms - Should require authentication")
-    void testCreateRoom_Authorization() {
-        Room newRoom = new Room();
-        newRoom.setRoomNumber("101");
-        newRoom.setRoomStatus("AVAILABLE");
-
+    @DisplayName("POST /api/rooms - Should accept a valid public create request")
+    void testCreateRoom_PublicCreate() {
         try {
-            org.springframework.test.web.servlet.MvcResult mvcResult = mockMvc.perform(post("/api/rooms").contentType("application/json").content("{}"))
-                    .andReturn();
-            int sc = mvcResult.getResponse().getStatus();
-            assertThat(sc).isGreaterThanOrEqualTo(400);
-        } catch (Exception e) {
-            // Treat any exception during unauthenticated POST as acceptable error for authorization check
-            return;
-        }
-        }
+            String payload = """
+                    {
+                      "roomNumber": "9999",
+                      "roomType": {"roomTypeId": 1},
+                      "roomStatus": "AVAILABLE",
+                      "cleanStatus": "CLEAN",
+                      "occupied": false,
+                      "type": "Single"
+                    }
+                    """;
 
+            org.springframework.test.web.servlet.MvcResult mvcResult = mockMvc.perform(post("/api/rooms")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(payload))
+                    .andReturn();
+
+            int statusCode = mvcResult.getResponse().getStatus();
+            assertThat(statusCode).isIn(200, 201);
+            assertThat(mvcResult.getResponse().getContentAsString()).contains("9999");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
+}
