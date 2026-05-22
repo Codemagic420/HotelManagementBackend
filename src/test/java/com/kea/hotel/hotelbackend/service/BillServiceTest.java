@@ -219,4 +219,32 @@ class BillServiceTest {
         assertThat(result).isPresent();
         assertThat(result.get().getReservation().getReservationId()).isEqualTo(1L);
     }
+
+    @Test
+    @DisplayName("Edge: negative quantity produces negative line total")
+    void negativeQuantityLineTotal_isNegative() {
+        BillItem item = new BillItem();
+        item.setQuantity(-2);
+        item.setUnitPrice(new BigDecimal("100"));
+        BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+        assertThat(lineTotal).isEqualByComparingTo(new BigDecimal("-200"));
+    }
+
+    @Test
+    @DisplayName("Edge: zero unit price yields zero line total")
+    void zeroPriceLineTotal_isZero() {
+        BillItem item = new BillItem();
+        item.setQuantity(3);
+        item.setUnitPrice(BigDecimal.ZERO);
+        BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+        assertThat(lineTotal).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    @DisplayName("Edge: bill can have null reservation")
+    void bill_canHaveNullReservation_reference() {
+        Bill bill = new Bill();
+        bill.setReservation(null);
+        assertThat(bill.getReservation()).isNull();
+    }
 }

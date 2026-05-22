@@ -2,36 +2,26 @@ package com.kea.hotel.hotelbackend.api;
 
 import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.model.RoomType;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static io.restassured.RestAssured.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@DisplayName("API Test Suite - REST Assured")
+@DisplayName("API Test Suite - MockMvc")
 class RoomAPITest {
 
-    @LocalServerPort
-    private int port;
-
-    private String baseUrl;
-
-    @BeforeEach
-    void setUp() {
-        baseUrl = "http://localhost:" + port;
-        RestAssured.port = port;
-    }
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     @DisplayName("GET /api/rooms - Should return 200 OK")
