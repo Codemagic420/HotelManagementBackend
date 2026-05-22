@@ -195,9 +195,10 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.15.0</version>
+            <version>4.37.0</version>
             <scope>test</scope>
         </dependency>
+        <!-- NOTE: selenium-devtools-v148 removed (not available in central). If CDP warnings persist, add matching devtools artifact or align Selenium version with available devtools. -->
 
         <!-- WebDriver Manager for automatic driver management -->
         <dependency>
@@ -282,6 +283,9 @@
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <spring.autoconfigure.exclude>org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration,org.springframework.boot.autoconfigure.mongo.MongoReactiveAutoConfiguration</spring.autoconfigure.exclude>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 
