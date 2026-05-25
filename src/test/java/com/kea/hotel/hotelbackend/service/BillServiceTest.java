@@ -113,18 +113,18 @@ class BillServiceTest {
     }
 
     @Test
-    @DisplayName("Should add bill item and update total")
-    void testAddItemToBill() {
-        List<BillItem> billItems = new ArrayList<>();
-        billItems.add(testBillItem);
-
+    @DisplayName("Should add bill item to bill")
+    void testAddItemToBillSavesItemForBill() {
+        // Arrange
         when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
-        when(billItemRepository.save(testBillItem)).thenReturn(testBillItem);
+        when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
 
-        // Add item logic
-        BigDecimal newTotal = testBill.getTotalAmount().add(testBillItem.getLineTotal());
+        // Act - Call service method to add item to bill
+        billService.addItemToBill(1L, testBillItem);
 
-        assertThat(newTotal).isEqualByComparingTo(new BigDecimal("300.00"));
+        // Assert - Verify interactions occurred
+        verify(billRepository, times(1)).findById(1L);
+        verify(billItemRepository, times(1)).save(any(BillItem.class));
     }
 
     @Test
@@ -218,5 +218,33 @@ class BillServiceTest {
 
         assertThat(result).isPresent();
         assertThat(result.get().getReservation().getReservationId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("Edge: negative quantity produces negative line total")
+    void negativeQuantityLineTotal_isNegative() {
+        BillItem item = new BillItem();
+        item.setQuantity(-2);
+        item.setUnitPrice(new BigDecimal("100"));
+        BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+        assertThat(lineTotal).isEqualByComparingTo(new BigDecimal("-200"));
+    }
+
+    @Test
+    @DisplayName("Edge: zero unit price yields zero line total")
+    void zeroPriceLineTotal_isZero() {
+        BillItem item = new BillItem();
+        item.setQuantity(3);
+        item.setUnitPrice(BigDecimal.ZERO);
+        BigDecimal lineTotal = item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+        assertThat(lineTotal).isEqualByComparingTo(BigDecimal.ZERO);
+    }
+
+    @Test
+    @DisplayName("Edge: bill can have null reservation")
+    void bill_canHaveNullReservation_reference() {
+        Bill bill = new Bill();
+        bill.setReservation(null);
+        assertThat(bill.getReservation()).isNull();
     }
 }

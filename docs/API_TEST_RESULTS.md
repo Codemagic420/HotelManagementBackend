@@ -176,7 +176,7 @@ Authentication Scenarios: 7
 
 ---
 
-### 4. API Tests (REST Assured)
+### 4. API Tests (MockMvc)
 
 #### RoomAPITest (12 tests)
 

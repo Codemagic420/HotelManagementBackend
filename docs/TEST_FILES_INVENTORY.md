@@ -132,7 +132,7 @@
 
 ---
 
-## 🔌 API Tests (REST Assured)
+## 🔌 API Tests (MockMvc)
 
 ### Path: `src/test/java/com/kea/hotel/hotelbackend/api/`
 
@@ -142,7 +142,7 @@
    ├─ Tests: testGetRooms_ContentType
    ├─ Tests: testGetRoom_NotFound
    ├─ Tests: testGetRooms_ResponseStructure
-   ├─ Tests: testCreateRoom_Authorization
+   ├─ Tests: testCreateRoom_PublicCreate
    ├─ Tests: testGetRooms_CORS
    ├─ Tests: testGetRooms_PerformanceBaseline
    ├─ Tests: testLogin_ReturnsToken

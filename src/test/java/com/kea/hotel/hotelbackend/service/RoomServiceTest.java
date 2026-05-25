@@ -139,11 +139,14 @@ class RoomServiceTest {
     @Test
     @DisplayName("Should delete room successfully")
     void testDelete() {
-        doNothing().when(roomRepository).deleteById(1L);
+    // Arrange
+    doNothing().when(roomRepository).deleteById(1L);
 
-        roomService.delete(1L);
+    // Act
+    roomService.delete(1L);
 
-        verify(roomRepository, times(1)).deleteById(1L);
+    // Assert
+    verify(roomRepository, times(1)).deleteById(1L);
     }
 
     @Test
