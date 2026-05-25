@@ -25,4 +25,6 @@ public class MongoReservation {
     private String status;
     private LocalDateTime createdAt;
     private List<MongoBill> bills = new ArrayList<>();
+    private String aiNotesSummary;
+    private LocalDateTime aiFieldsUpdatedAt;
 }

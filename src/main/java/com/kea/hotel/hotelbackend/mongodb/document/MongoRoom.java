@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,4 +22,6 @@ public class MongoRoom {
     private String cleanStatus;
     private Boolean occupied;
     private List<MongoRoomCleaningTask> cleaningTasks = new ArrayList<>();
+    private String aiAssessmentSummary;
+    private LocalDateTime aiFieldsUpdatedAt;
 }

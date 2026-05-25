@@ -140,7 +140,6 @@ class RoomServiceTest {
     @DisplayName("Should delete room successfully")
     void testDelete() {
         doNothing().when(roomRepository).deleteById(1L);
-        when(roomRepository.existsById(1L)).thenReturn(true).thenReturn(false);
 
         roomService.delete(1L);
 

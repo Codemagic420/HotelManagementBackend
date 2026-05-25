@@ -187,7 +187,6 @@ class ReservationServiceTest {
     @DisplayName("Should delete reservation successfully")
     void testDelete() {
         doNothing().when(reservationRepository).deleteById(1L);
-        when(reservationRepository.existsById(1L)).thenReturn(true);
 
         reservationService.delete(1L);
 

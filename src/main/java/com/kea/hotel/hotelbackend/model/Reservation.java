@@ -58,4 +58,10 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String aiNotesSummary;
+
+    @Column(name = "ai_fields_updated_at")
+    private LocalDateTime aiFieldsUpdatedAt;
 }

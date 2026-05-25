@@ -10,6 +10,7 @@ import com.kea.hotel.hotelbackend.repository.BillRepository;
 import com.kea.hotel.hotelbackend.repository.GuestRepository;
 import com.kea.hotel.hotelbackend.repository.ReservationRepository;
 import com.kea.hotel.hotelbackend.repository.RoomRepository;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/migrate")
+@Profile("!test")
 public class DataMigrator {
 
     private final GuestRepository guestRepository;

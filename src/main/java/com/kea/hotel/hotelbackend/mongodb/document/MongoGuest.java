@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,4 +22,6 @@ public class MongoGuest {
     private String phone;
     private String creditCardLast4;
     private List<MongoReservation> reservations = new ArrayList<>();
+    private String aiProfileSummary;
+    private LocalDateTime aiFieldsUpdatedAt;
 }

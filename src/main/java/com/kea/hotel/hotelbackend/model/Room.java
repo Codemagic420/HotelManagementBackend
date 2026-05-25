@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "room")
@@ -30,4 +31,10 @@ public class Room {
 
     @Column(length = 255)
     private String type;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String aiAssessmentSummary;
+
+    @Column(name = "ai_fields_updated_at")
+    private LocalDateTime aiFieldsUpdatedAt;
 }

@@ -4,6 +4,7 @@ import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.repository.RoomRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,9 +12,11 @@ import java.util.Optional;
 public class RoomService {
 
     private final RoomRepository repo;
+    private final AiEnrichmentService aiEnrichmentService;
 
-    public RoomService(RoomRepository repo) {
+    public RoomService(RoomRepository repo, AiEnrichmentService aiEnrichmentService) {
         this.repo = repo;
+        this.aiEnrichmentService = aiEnrichmentService;
     }
 
     public List<Room> findAll() {
@@ -39,5 +42,14 @@ public class RoomService {
 
     public void delete(Long id) {
         repo.deleteById(id);
+    }
+
+    public Optional<Room> enrichWithAI(Long id) {
+        return repo.findById(id).map(room -> {
+            String summary = aiEnrichmentService.generateRoomAssessmentSummary(room);
+            room.setAiAssessmentSummary(summary);
+            room.setAiFieldsUpdatedAt(LocalDateTime.now());
+            return repo.save(room);
+        });
     }
 }

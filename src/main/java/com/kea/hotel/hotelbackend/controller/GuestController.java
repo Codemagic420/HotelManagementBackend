@@ -46,4 +46,11 @@ public class GuestController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/enrich-ai")
+    public ResponseEntity<Guest> enrichGuestWithAI(@PathVariable Long id) {
+        return service.enrichWithAI(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
