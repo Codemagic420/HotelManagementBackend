@@ -1,4 +1,4 @@
-# Exam Requirements
+hvordan fungere# Exam Requirements
 
 ## Project Assignment Overview
 

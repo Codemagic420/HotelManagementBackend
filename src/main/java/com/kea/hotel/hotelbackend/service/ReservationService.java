@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.Reservation;
 import com.kea.hotel.hotelbackend.repository.ReservationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,7 +21,11 @@ public class ReservationService {
         this.aiEnrichmentService = aiEnrichmentService;
     }
 
-    public List<Reservation> findAll() {
+    public Page<Reservation> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public List<Reservation> findAllList() {
         return repo.findAll();
     }
 
@@ -50,6 +56,14 @@ public class ReservationService {
         return repo.findById(id).map(reservation -> {
             String summary = aiEnrichmentService.generateReservationNotesSummary(reservation);
             reservation.setAiNotesSummary(summary);
+            reservation.setAiFieldsUpdatedAt(LocalDateTime.now());
+            return repo.save(reservation);
+        });
+    }
+
+    public Optional<Reservation> updateAINotes(Long id, String notes) {
+        return repo.findById(id).map(reservation -> {
+            reservation.setAiNotesSummary(notes);
             reservation.setAiFieldsUpdatedAt(LocalDateTime.now());
             return repo.save(reservation);
         });

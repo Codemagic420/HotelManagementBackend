@@ -33,7 +33,7 @@ CREATE TABLE user_account (
 -- Stores information about hotel cleaning staff
 -- ============================================
 CREATE TABLE cleaner (
-    cleaner_id INT NOT NULL AUTO_INCREMENT,
+    cleaner_id BIGINT NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     phone VARCHAR(15),
@@ -47,7 +47,7 @@ CREATE TABLE cleaner (
 -- Stores optional services guests can purchase
 -- ============================================
 CREATE TABLE extra_service (
-    extra_service_id INT NOT NULL AUTO_INCREMENT,
+    extra_service_id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
     unit_price DECIMAL(8,2) NOT NULL,
     price_unit VARCHAR(20) NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE extra_service (
 -- Stores inventory items for billing and tracking
 -- ============================================
 CREATE TABLE inventory_item (
-    inventory_item_id INT NOT NULL AUTO_INCREMENT,
+    inventory_item_id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL UNIQUE,
     unit_price DECIMAL(8,2) NOT NULL,
     active TINYINT(1) NOT NULL DEFAULT 1,
@@ -81,6 +81,8 @@ CREATE TABLE guest (
     email VARCHAR(150) NOT NULL UNIQUE,
     phone VARCHAR(15),
     credit_card_last4 VARCHAR(4),
+    ai_profile_summary LONGTEXT,
+    ai_fields_updated_at TIMESTAMP NULL,
     PRIMARY KEY (guest_id),
     INDEX idx_guest_email (email),
     INDEX idx_guest_name (last_name, first_name)
@@ -91,7 +93,7 @@ CREATE TABLE guest (
 -- Stores room type definitions (Single, Double, Suite, etc.)
 -- ============================================
 CREATE TABLE room_type (
-    room_type_id INT NOT NULL AUTO_INCREMENT,
+    room_type_id BIGINT NOT NULL AUTO_INCREMENT,
     name VARCHAR(50) NOT NULL UNIQUE,
     max_occupancy INT NOT NULL,
     PRIMARY KEY (room_type_id)
@@ -103,8 +105,8 @@ CREATE TABLE room_type (
 -- Rates vary based on season (Spring, Summer, Autumn, Winter)
 -- ============================================
 CREATE TABLE season_rate (
-    rate_id INT NOT NULL AUTO_INCREMENT,
-    room_type_id INT NOT NULL,
+    rate_id BIGINT NOT NULL AUTO_INCREMENT,
+    room_type_id BIGINT NOT NULL,
     season VARCHAR(20) NOT NULL,
     price_per_night DECIMAL(8,2) NOT NULL,
     valid_from DATE NOT NULL,
@@ -122,13 +124,15 @@ CREATE TABLE season_rate (
 -- Uses INT for room_id to keep it simple
 -- ============================================
 CREATE TABLE room (
-    room_id INT NOT NULL AUTO_INCREMENT,
+    room_id BIGINT NOT NULL AUTO_INCREMENT,
     room_number VARCHAR(10) NOT NULL UNIQUE,
-    room_type_id INT NOT NULL,
+    room_type_id BIGINT NOT NULL,
     room_status VARCHAR(20) NOT NULL,
     clean_status VARCHAR(20) NOT NULL,
     occupied BIT(1) NOT NULL DEFAULT 0,
     type VARCHAR(255) NOT NULL,
+    ai_assessment_summary LONGTEXT,
+    ai_fields_updated_at TIMESTAMP NULL,
     PRIMARY KEY (room_id),
     FOREIGN KEY (room_type_id) REFERENCES room_type(room_type_id) ON DELETE CASCADE,
     INDEX idx_room_status (room_status),
@@ -143,20 +147,22 @@ CREATE TABLE room (
 -- IMPORTANT: Keep foreign key types consistent!
 -- ============================================
 CREATE TABLE reservation (
-    reservation_id INT NOT NULL AUTO_INCREMENT,
+    reservation_id BIGINT NOT NULL AUTO_INCREMENT,
     reference_no VARCHAR(20) NOT NULL UNIQUE,
     check_in_date DATE NOT NULL,
     check_out_date DATE NOT NULL,
     nights INT NOT NULL,
     num_guests INT NOT NULL,
-    room_type_id INT NOT NULL,
-    assigned_room_id INT,
-    booked_rate_id INT NOT NULL,
+    room_type_id BIGINT NOT NULL,
+    assigned_room_id BIGINT,
+    booked_rate_id BIGINT NOT NULL,
     booked_nightly_price DECIMAL(8,2) NOT NULL,
     status VARCHAR(255) NOT NULL DEFAULT 'CONFIRMED',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     guest_id BIGINT,
-    room_id INT,
+    room_id BIGINT,
+    ai_notes_summary LONGTEXT,
+    ai_fields_updated_at TIMESTAMP NULL,
     PRIMARY KEY (reservation_id),
     FOREIGN KEY (room_type_id) REFERENCES room_type(room_type_id) ON DELETE RESTRICT,
     FOREIGN KEY (assigned_room_id) REFERENCES room(room_id) ON DELETE SET NULL,
@@ -177,7 +183,7 @@ CREATE TABLE reservation (
 -- Foreign key types must match: INT for reservation_id, BIGINT for guest_id
 -- ============================================
 CREATE TABLE reservation_guest (
-    reservation_id INT NOT NULL,
+    reservation_id BIGINT NOT NULL,
     guest_id BIGINT NOT NULL,
     is_primary TINYINT(1) NOT NULL DEFAULT 0,
     PRIMARY KEY (reservation_id, guest_id),
@@ -191,8 +197,8 @@ CREATE TABLE reservation_guest (
 -- Stores bill information for reservations
 -- ============================================
 CREATE TABLE bill (
-    bill_id INT NOT NULL AUTO_INCREMENT,
-    reservation_id INT NOT NULL UNIQUE,
+    bill_id BIGINT NOT NULL AUTO_INCREMENT,
+    reservation_id BIGINT NOT NULL UNIQUE,
     opened_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     closed_at TIMESTAMP NULL,
     total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -210,8 +216,8 @@ CREATE TABLE bill (
 -- Includes room charges and extra services
 -- ============================================
 CREATE TABLE bill_item (
-    bill_item_id INT NOT NULL AUTO_INCREMENT,
-    bill_id INT NOT NULL,
+    bill_item_id BIGINT NOT NULL AUTO_INCREMENT,
+    bill_id BIGINT NOT NULL,
     item_type VARCHAR(50) NOT NULL,
     description VARCHAR(200) NOT NULL,
     quantity INT NOT NULL DEFAULT 1,
@@ -231,8 +237,8 @@ CREATE TABLE bill_item (
 -- Stores cleaning tasks for rooms
 -- ============================================
 CREATE TABLE room_cleaning_task (
-    task_id INT NOT NULL AUTO_INCREMENT,
-    room_id INT NOT NULL,
+    task_id BIGINT NOT NULL AUTO_INCREMENT,
+    room_id BIGINT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     task_status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
     note VARCHAR(200),
@@ -247,8 +253,8 @@ CREATE TABLE room_cleaning_task (
 -- Junction table for assigning cleaners to tasks
 -- ============================================
 CREATE TABLE room_cleaning_assignment (
-    task_id INT NOT NULL,
-    cleaner_id INT NOT NULL,
+    task_id BIGINT NOT NULL,
+    cleaner_id BIGINT NOT NULL,
     assigned_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (task_id, cleaner_id),
     FOREIGN KEY (task_id) REFERENCES room_cleaning_task(task_id) ON DELETE CASCADE,

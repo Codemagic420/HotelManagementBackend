@@ -9,28 +9,12 @@ USE mysql;
 -- ============================================
 -- DROP EXISTING USERS (cleanup)
 -- ============================================
-DROP USER IF EXISTS 'admin'@'localhost';
-DROP USER IF EXISTS 'admin'@'%';
-DROP USER IF EXISTS 'app_user'@'localhost';
-DROP USER IF EXISTS 'app_user'@'%';
+DROP USER IF EXISTS 'appuser'@'localhost';
+DROP USER IF EXISTS 'appuser'@'%';
 DROP USER IF EXISTS 'cleaner_user'@'localhost';
 DROP USER IF EXISTS 'cleaner_user'@'%';
 DROP USER IF EXISTS 'staff_user'@'localhost';
 DROP USER IF EXISTS 'staff_user'@'%';
-DROP USER IF EXISTS 'staff'@'localhost';
-DROP USER IF EXISTS 'staff'@'%';
-DROP USER IF EXISTS 'user'@'localhost';
-DROP USER IF EXISTS 'user'@'%';
-
--- ============================================
--- CREATE ADMIN USER
--- Privileges: ALL - Full database administrative access
--- Used by: Database administrators, developers
--- ============================================
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin123';
-CREATE USER 'admin'@'%' IDENTIFIED BY 'admin123';
-GRANT ALL PRIVILEGES ON hotel_db.* TO 'admin'@'localhost' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON hotel_db.* TO 'admin'@'%' WITH GRANT OPTION;
 
 -- ============================================
 -- CREATE APPLICATION USER
@@ -38,12 +22,12 @@ GRANT ALL PRIVILEGES ON hotel_db.* TO 'admin'@'%' WITH GRANT OPTION;
 -- Used by: Spring Boot backend application (CRUD operations)
 -- Minimum privileges needed for app functionality
 -- ============================================
-CREATE USER 'app_user'@'localhost' IDENTIFIED BY 'app_password123';
-CREATE USER 'app_user'@'%' IDENTIFIED BY 'app_password123';
-GRANT SELECT, INSERT, UPDATE, DELETE ON hotel_db.* TO 'app_user'@'localhost';
-GRANT SELECT, INSERT, UPDATE, DELETE ON hotel_db.* TO 'app_user'@'%';
-GRANT EXECUTE ON hotel_db.* TO 'app_user'@'localhost';
-GRANT EXECUTE ON hotel_db.* TO 'app_user'@'%';
+CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'apppassword123';
+CREATE USER 'appuser'@'%' IDENTIFIED BY 'apppassword123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON hotel_db.* TO 'appuser'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON hotel_db.* TO 'appuser'@'%';
+GRANT EXECUTE ON hotel_db.* TO 'appuser'@'localhost';
+GRANT EXECUTE ON hotel_db.* TO 'appuser'@'%';
 
 -- ============================================
 -- CREATE CLEANER USER
@@ -54,8 +38,8 @@ GRANT EXECUTE ON hotel_db.* TO 'app_user'@'%';
 -- ============================================
 CREATE USER 'cleaner_user'@'localhost' IDENTIFIED BY 'cleaner_password123';
 CREATE USER 'cleaner_user'@'%' IDENTIFIED BY 'cleaner_password123';
-GRANT SELECT ON hotel_db.rooms TO 'cleaner_user'@'localhost';
-GRANT SELECT ON hotel_db.rooms TO 'cleaner_user'@'%';
+GRANT SELECT ON hotel_db.room TO 'cleaner_user'@'localhost';
+GRANT SELECT ON hotel_db.room TO 'cleaner_user'@'%';
 GRANT SELECT ON hotel_db.room_cleaning_tasks TO 'cleaner_user'@'localhost';
 GRANT SELECT ON hotel_db.room_cleaning_tasks TO 'cleaner_user'@'%';
 GRANT SELECT ON hotel_db.room_cleaning_assignments TO 'cleaner_user'@'localhost';
@@ -80,8 +64,8 @@ GRANT SELECT ON hotel_db.reservations TO 'staff_user'@'localhost';
 GRANT SELECT ON hotel_db.reservations TO 'staff_user'@'%';
 GRANT SELECT ON hotel_db.reservation_guests TO 'staff_user'@'localhost';
 GRANT SELECT ON hotel_db.reservation_guests TO 'staff_user'@'%';
-GRANT SELECT ON hotel_db.rooms TO 'staff_user'@'localhost';
-GRANT SELECT ON hotel_db.rooms TO 'staff_user'@'%';
+GRANT SELECT ON hotel_db.room TO 'staff_user'@'localhost';
+GRANT SELECT ON hotel_db.room TO 'staff_user'@'%';
 GRANT SELECT ON hotel_db.room_types TO 'staff_user'@'localhost';
 GRANT SELECT ON hotel_db.room_types TO 'staff_user'@'%';
 GRANT SELECT ON hotel_db.extra_services TO 'staff_user'@'localhost';

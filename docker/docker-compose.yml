@@ -1,0 +1,237 @@
+# ============================================
+# Docker Compose - Hotel Management Backend
+#
+# This file orchestrates the full stack:
+# 1. Spring Boot Application (Java 21)
+# 2. MySQL 8.0 (Relational) - Hotel core data
+# 3. MongoDB 7 (Document) - Flexible data storage
+# 4. Neo4j 5 (Graph) - Relationship mapping
+#
+# All databases are automatically initialized with SQL scripts
+# Environment variables are loaded from .env file
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose down           # Stop all services
+#   docker-compose logs -f app    # View application logs
+#   docker-compose logs -f mysql  # View MySQL logs
+#
+# Note: Run from parent directory: docker-compose -f docker/docker-compose.yml up -d
+# ============================================
+
+services:
+  # ============================================
+  # Spring Boot Application - Hotel Management Backend
+  # Connects to all three databases
+  # ============================================
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: hotelappcontainer
+
+    # Depends on databases being ready
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+
+    # Environment variables for database connections
+    environment:
+      # MySQL Configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hotel_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-appuser}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-apppassword123}
+
+      # User Account Passwords (required for DataInitializer)
+      MYSQL_ADMIN_PASSWORD: ${MYSQL_ADMIN_PASSWORD:-admin123}
+      MYSQL_STAFF_PASSWORD: ${MYSQL_STAFF_PASSWORD:-staff123}
+      CLEANER_PASSWORD: ${CLEANER_PASSWORD:-cleaner123}
+
+      # MongoDB Configuration
+      SPRING_MONGODB_URI: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongodb:27017/hotel_db?authSource=admin
+
+      # Neo4j Configuration
+      SPRING_NEO4J_URI: neo4j://neo4j:7687
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: ${NEO4J_USER}
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: ${NEO4J_PASSWORD}
+
+      # Spring Boot Settings
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-default}
+
+      # Application Port
+      SERVER_PORT: 8080
+
+    # Port mapping: host:container
+    ports:
+      - "8080:8080"
+
+    # Network for intercontainer communication
+    networks:
+      - hotelnetwork
+
+    # Volume for logs (optional)
+    volumes:
+      - applogs:/var/log/app
+
+    # Restart policy
+    restart: unless-stopped
+  # ============================================
+  # MySQL 8.0 - Relational Database
+  # Primary database for hotel management system
+  # ============================================
+  mysql:
+    image: mysql:8.0
+    container_name: hoteldbcontainer
+
+    # Environment variables from .env file
+    environment:
+      # Root user credentials
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+    # Port mapping: host:container
+    # Default: 3306. Override with MYSQL_PORT=3307 to avoid local MySQL conflicts
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+
+    # Volume mounts for persistence and initialization
+    volumes:
+      # Persistent storage for MySQL data
+      - mysqldata:/var/lib/mysql
+
+      # SQL scripts auto-executed on container startup (in alphabetical order)
+      # These create the complete database schema, populate test data, and set up security
+      - ../sql/01_database_create.sql:/docker-entrypoint-initdb.d/01_database_create.sql
+      - ../sql/02_test_data.sql:/docker-entrypoint-initdb.d/02_test_data.sql
+      - ../sql/03_logic.sql:/docker-entrypoint-initdb.d/03_logic.sql
+      - ../sql/04_users_privileges.sql:/docker-entrypoint-initdb.d/04_users_privileges.sql
+      - ../sql/05_audit.sql:/docker-entrypoint-initdb.d/05_audit.sql
+      - ../sql/06_ai_enrichment.sql:/docker-entrypoint-initdb.d/06_ai_enrichment.sql
+
+    # Network for intercontainer communication
+    networks:
+      - hotelnetwork
+
+    # Health check - verifies database is responsive
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+    # Restart policy
+    restart: unless-stopped
+
+  # ============================================
+  # MongoDB 7 - Document Database
+  # Flexible data storage for dynamic schemas
+  # Used for: Reservations, rooms, guests (document format)
+  # ============================================
+  mongodb:
+    image: mongo:7
+    container_name: hotelmongocontainer
+
+    # Authentication credentials
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGODB_DATABASE}
+
+    # Port mapping
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+
+    # Persistent storage
+    volumes:
+      - mongodata:/data/db
+
+    # Network for inter-container communication
+    networks:
+      - hotelnetwork
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check - verifies MongoDB is responsive
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Neo4j 5 - Graph Database
+  # Relationship and network mapping
+  # Used for: Guest relationships, booking networks, room dependencies
+  # ============================================
+  neo4j:
+    image: neo4j:5
+    container_name: hotelneo4jcontainer
+
+    # Authentication and plugins
+    environment:
+      # Neo4j auth in format: username/password
+      NEO4J_AUTH: ${NEO4J_USER}/${NEO4J_PASSWORD}
+      # APOC plugin for extended graph functions
+      NEO4J_PLUGINS: '["apoc"]'
+
+    # Port mapping
+    ports:
+      # 7474: Neo4j Browser UI (http://localhost:7474)
+      - "7474:7474"
+      # 7687: Bolt protocol (for application connections)
+      - "${NEO4J_PORT:-7687}:7687"
+
+    # Persistent storage
+    volumes:
+      - neo4jdata:/data
+
+    # Network for inter-container communication
+    networks:
+      - hotelnetwork
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Health check - verifies Neo4j is responsive
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:7474 || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ============================================
+# VOLUMES - Persistent Data Storage
+# These are named volumes managed by Docker
+# Data persists even when containers are stopped
+# ============================================
+volumes:
+  # MySQL data directory
+  mysqldata:
+    driver: local
+
+  # MongoDB data directory
+  mongodata:
+    driver: local
+
+  # Neo4j data directory
+  neo4jdata:
+    driver: local
+
+  # Application logs directory
+  applogs:
+    driver: local
+
+# ============================================
+# NETWORKS - Container Communication
+# All services on the same network can communicate
+# by service name (e.g., 'mysql' instead of localhost)
+# ============================================
+networks:
+  hotelnetwork:
+    driver: bridge

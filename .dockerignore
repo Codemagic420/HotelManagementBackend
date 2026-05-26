@@ -1,0 +1,53 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Maven
+target/
+.m2/
+
+# Documentation
+docs/
+README.md
+INSTALLATION.md
+*.md
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+
+# Node (if frontend added later)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Database dumps (large files)
+*.sql
+*.dump
+*.archive
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# OS files
+Thumbs.db
+.DS_Store
