@@ -42,6 +42,8 @@ public class GuestService {
             existing.setFirstName(updated.getFirstName());
             existing.setLastName(updated.getLastName());
             existing.setEmail(updated.getEmail());
+            existing.setPhone(updated.getPhone());
+            existing.setCreditCardLast4(updated.getCreditCardLast4());
             return repo.save(existing);
         });
     }

@@ -41,6 +41,8 @@ public class RoomService {
         return repo.findById(id).map(existing -> {
             existing.setRoomNumber(updated.getRoomNumber());
             existing.setType(updated.getType());
+            existing.setRoomStatus(updated.getRoomStatus());
+            existing.setCleanStatus(updated.getCleanStatus());
             existing.setOccupied(updated.getOccupied());
             return repo.save(existing);
         });
