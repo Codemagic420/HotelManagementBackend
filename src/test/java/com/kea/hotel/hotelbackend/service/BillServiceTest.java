@@ -85,7 +85,7 @@ class BillServiceTest {
 
         when(billRepository.findAll()).thenReturn(Arrays.asList(testBill, bill2));
 
-        List<Bill> result = billService.findAll();
+        List<Bill> result = billService.findAllList();
 
         assertThat(result).hasSize(2);
         verify(billRepository, times(1)).findAll();

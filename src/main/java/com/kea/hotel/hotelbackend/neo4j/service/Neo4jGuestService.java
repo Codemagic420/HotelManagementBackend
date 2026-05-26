@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.neo4j.service;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jGuest;
 import com.kea.hotel.hotelbackend.neo4j.repository.Neo4jGuestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,11 @@ public class Neo4jGuestService {
         this.repository = repository;
     }
 
-    public List<Neo4jGuest> findAll() {
+    public Page<Neo4jGuest> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public List<Neo4jGuest> findAllList() {
         return repository.findAll();
     }
 

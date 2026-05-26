@@ -60,7 +60,7 @@ class RoomServiceTest {
 
         when(roomRepository.findAll()).thenReturn(Arrays.asList(testRoom, room2));
 
-        List<Room> result = roomService.findAll();
+        List<Room> result = roomService.findAllList();
 
         assertThat(result).hasSize(2).contains(testRoom, room2);
         verify(roomRepository, times(1)).findAll();

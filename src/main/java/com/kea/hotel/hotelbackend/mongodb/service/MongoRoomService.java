@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.mongodb.service;
 
 import com.kea.hotel.hotelbackend.mongodb.document.MongoRoom;
 import com.kea.hotel.hotelbackend.mongodb.repository.MongoRoomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,11 @@ public class MongoRoomService {
         this.repository = repository;
     }
 
-    public List<MongoRoom> findAll() {
+    public Page<MongoRoom> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    public List<MongoRoom> findAllList() {
         return repository.findAll();
     }
 

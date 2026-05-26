@@ -70,7 +70,7 @@ class ReservationServiceTest {
 
         when(reservationRepository.findAll()).thenReturn(Arrays.asList(testReservation, res2));
 
-        List<Reservation> result = reservationService.findAll();
+        List<Reservation> result = reservationService.findAllList();
 
         assertThat(result).hasSize(2).contains(testReservation, res2);
         verify(reservationRepository, times(1)).findAll();

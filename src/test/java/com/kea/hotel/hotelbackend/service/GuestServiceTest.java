@@ -51,7 +51,7 @@ class GuestServiceTest {
         when(guestRepository.findAll()).thenReturn(Arrays.asList(testGuest, guest2));
 
         // ACT: Call service method
-        List<Guest> result = guestService.findAll();
+        List<Guest> result = guestService.findAllList();
 
         // ASSERT: Verify results and mock interactions
         assertThat(result).hasSize(2).contains(testGuest, guest2);

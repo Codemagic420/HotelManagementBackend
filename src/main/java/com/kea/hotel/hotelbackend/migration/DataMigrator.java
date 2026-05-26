@@ -10,6 +10,7 @@ import com.kea.hotel.hotelbackend.repository.BillRepository;
 import com.kea.hotel.hotelbackend.repository.GuestRepository;
 import com.kea.hotel.hotelbackend.repository.ReservationRepository;
 import com.kea.hotel.hotelbackend.repository.RoomRepository;
+import org.bson.Document;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.neo4j.core.Neo4jClient;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/migrate")
@@ -60,88 +59,88 @@ public class DataMigrator {
 
     public void migrateToMongo() {
         try {
-            List<Room> rooms = roomRepository.findAll();
-            System.out.println("Found " + rooms.size() + " rooms to migrate");
+            mongoTemplate.dropCollection("rooms");
+            mongoTemplate.dropCollection("reservations");
+            mongoTemplate.dropCollection("bills");
+            System.out.println("Cleared existing MongoDB collections");
 
+            List<Room> rooms = roomRepository.findAll();
+            System.out.println("Migrating " + rooms.size() + " rooms to MongoDB");
             for (Room room : rooms) {
-                Map<String, Object> doc = new HashMap<>();
-                doc.put("roomId", room.getRoomId());
-                doc.put("roomNumber", room.getRoomNumber());
-                doc.put("type", room.getType());
-                doc.put("occupied", room.getOccupied());
-                System.out.println("Saving room document: " + doc);
-                mongoTemplate.save(doc, "rooms");
+                Document doc = new Document()
+                    .append("roomId", room.getRoomId())
+                    .append("roomNumber", room.getRoomNumber())
+                    .append("type", room.getType())
+                    .append("occupied", room.getOccupied());
+                mongoTemplate.getDb().getCollection("rooms").insertOne(doc);
             }
 
             List<Reservation> reservations = reservationRepository.findAll();
-            System.out.println("Found " + reservations.size() + " reservations to migrate");
-
+            System.out.println("Migrating " + reservations.size() + " reservations to MongoDB");
             for (Reservation res : reservations) {
-                Map<String, Object> doc = new HashMap<>();
-                doc.put("reservationId", res.getReservationId());
-                doc.put("status", res.getStatus());
-                doc.put("checkInDate", res.getCheckInDate() != null ? res.getCheckInDate().toString() : null);
-                doc.put("checkOutDate", res.getCheckOutDate() != null ? res.getCheckOutDate().toString() : null);
+                Document doc = new Document()
+                    .append("reservationId", res.getReservationId())
+                    .append("referenceNo", res.getReferenceNo())
+                    .append("status", res.getStatus())
+                    .append("checkInDate", res.getCheckInDate() != null ? res.getCheckInDate().toString() : null)
+                    .append("checkOutDate", res.getCheckOutDate() != null ? res.getCheckOutDate().toString() : null)
+                    .append("nights", res.getNights());
 
-                Guest g = res.getGuest();
-                if (g != null) {
-                    Map<String, Object> guestDoc = new HashMap<>();
-                    guestDoc.put("guestId", g.getGuestId());
-                    guestDoc.put("firstName", g.getFirstName());
-                    guestDoc.put("lastName", g.getLastName());
-                    guestDoc.put("email", g.getEmail());
-                    doc.put("guest", guestDoc);
+                if (res.getGuest() != null) {
+                    Guest g = res.getGuest();
+                    Document guestDoc = new Document()
+                        .append("guestId", g.getGuestId())
+                        .append("firstName", g.getFirstName())
+                        .append("lastName", g.getLastName())
+                        .append("email", g.getEmail());
+                    doc.append("guest", guestDoc);
                 }
 
-                Room r = res.getRoom();
-                if (r != null) {
-                    Map<String, Object> roomDoc = new HashMap<>();
-                    roomDoc.put("roomId", r.getRoomId());
-                    roomDoc.put("roomNumber", r.getRoomNumber());
-                    roomDoc.put("type", r.getType());
-                    doc.put("room", roomDoc);
+                if (res.getRoom() != null) {
+                    Room r = res.getRoom();
+                    Document roomDoc = new Document()
+                        .append("roomId", r.getRoomId())
+                        .append("roomNumber", r.getRoomNumber())
+                        .append("type", r.getType());
+                    doc.append("room", roomDoc);
                 }
 
-                System.out.println("Saving reservation document: " + doc);
-                mongoTemplate.save(doc, "reservations");
+                mongoTemplate.getDb().getCollection("reservations").insertOne(doc);
             }
 
             List<Bill> bills = billRepository.findAll();
-            System.out.println("Found " + bills.size() + " bills to migrate");
-
+            System.out.println("Migrating " + bills.size() + " bills to MongoDB");
             for (Bill bill : bills) {
-                Map<String, Object> doc = new HashMap<>();
-                doc.put("billId", bill.getBillId());
-                doc.put("totalAmount", bill.getTotalAmount() != null ? bill.getTotalAmount().toString() : null);
-                doc.put("closedAt", bill.getClosedAt() != null ? bill.getClosedAt().toString() : null);
+                Document doc = new Document()
+                    .append("billId", bill.getBillId())
+                    .append("totalAmount", bill.getTotalAmount() != null ? bill.getTotalAmount().toString() : null)
+                    .append("openedAt", bill.getOpenedAt() != null ? bill.getOpenedAt().toString() : null)
+                    .append("closedAt", bill.getClosedAt() != null ? bill.getClosedAt().toString() : null);
 
-                Reservation res = bill.getReservation();
-                if (res != null) {
-                    doc.put("reservationId", res.getReservationId());
+                if (bill.getReservation() != null) {
+                    doc.append("reservationId", bill.getReservation().getReservationId());
                 }
 
-                List<Map<String, Object>> billItems = new ArrayList<>();
+                List<Document> billItems = new ArrayList<>();
                 for (BillItem item : billItemRepository.findAll()) {
                     if (item.getBill() != null && item.getBill().getBillId().equals(bill.getBillId())) {
-                        Map<String, Object> itemDoc = new HashMap<>();
-                        itemDoc.put("billItemId", item.getBillItemId());
-                        itemDoc.put("itemType", item.getItemType());
-                        itemDoc.put("description", item.getDescription());
-                        itemDoc.put("quantity", item.getQuantity());
-                        itemDoc.put("unitPrice", item.getUnitPrice() != null ? item.getUnitPrice().toString() : null);
-                        itemDoc.put("lineTotal", item.getLineTotal() != null ? item.getLineTotal().toString() : null);
-                        itemDoc.put("postedAt", item.getPostedAt() != null ? item.getPostedAt().toString() : null);
-                        itemDoc.put("lineTotal", item.getLineTotal() != null ? item.getLineTotal().toString() : null);
+                        Document itemDoc = new Document()
+                            .append("billItemId", item.getBillItemId())
+                            .append("itemType", item.getItemType())
+                            .append("description", item.getDescription())
+                            .append("quantity", item.getQuantity())
+                            .append("unitPrice", item.getUnitPrice() != null ? item.getUnitPrice().toString() : null)
+                            .append("lineTotal", item.getLineTotal() != null ? item.getLineTotal().toString() : null)
+                            .append("postedAt", item.getPostedAt() != null ? item.getPostedAt().toString() : null);
                         billItems.add(itemDoc);
                     }
                 }
-                doc.put("items", billItems);
+                doc.append("items", billItems);
 
-                System.out.println("Saving bill document: " + doc);
-                mongoTemplate.save(doc, "bills");
+                mongoTemplate.getDb().getCollection("bills").insertOne(doc);
             }
 
-            System.out.println("Migration to MongoDB completed successfully");
+            System.out.println("MongoDB migration completed successfully!");
         } catch (Exception e) {
             System.err.println("Error during MongoDB migration: " + e.getMessage());
             e.printStackTrace();

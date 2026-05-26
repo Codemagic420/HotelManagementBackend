@@ -136,12 +136,19 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initializeUsers() {
-        String adminPassword = System.getenv("MYSQL_ADMIN_PASSWORD") != null ?
-            System.getenv("MYSQL_ADMIN_PASSWORD") : "admin123";
-        String staffPassword = System.getenv("MYSQL_STAFF_PASSWORD") != null ?
-            System.getenv("MYSQL_STAFF_PASSWORD") : "staff123";
-        String cleanerPassword = System.getenv("CLEANER_PASSWORD") != null ?
-            System.getenv("CLEANER_PASSWORD") : "cleaner123";
+        String adminPassword = System.getenv("MYSQL_ADMIN_PASSWORD");
+        String staffPassword = System.getenv("MYSQL_STAFF_PASSWORD");
+        String cleanerPassword = System.getenv("CLEANER_PASSWORD");
+
+        if (adminPassword == null || adminPassword.isBlank()) {
+            throw new IllegalStateException("MYSQL_ADMIN_PASSWORD environment variable is required");
+        }
+        if (staffPassword == null || staffPassword.isBlank()) {
+            throw new IllegalStateException("MYSQL_STAFF_PASSWORD environment variable is required");
+        }
+        if (cleanerPassword == null || cleanerPassword.isBlank()) {
+            throw new IllegalStateException("CLEANER_PASSWORD environment variable is required");
+        }
 
         if (userRepository.findByUsername("admin").isEmpty()) {
             UserAccount admin = new UserAccount();
@@ -269,10 +276,10 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initializeReservations() {
-        List<Guest> guests = guestService.findAll();
+        List<Guest> guests = guestService.findAllList();
         List<RoomType> roomTypes = roomTypeService.findAll();
         List<SeasonRate> rates = seasonRateService.findAll();
-        List<Room> rooms = roomService.findAll();
+        List<Room> rooms = roomService.findAllList();
 
         LocalDate baseDate = LocalDate.of(2026, 1, 1);
 
@@ -301,7 +308,7 @@ public class DataInitializer implements ApplicationRunner {
         System.out.println("✓ Created 120 reservations");
 
         // Add reservation guests
-        List<Reservation> reservations = reservationService.findAll();
+        List<Reservation> reservations = reservationService.findAllList();
         int rgCount = 0;
         for (Reservation res : reservations) {
             if (rgCount < 120) {
@@ -332,7 +339,7 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initializeBills() {
-        List<Reservation> reservations = reservationService.findAll();
+        List<Reservation> reservations = reservationService.findAllList();
         int billCount = 0;
         int billItemCount = 0;
 
@@ -384,7 +391,7 @@ public class DataInitializer implements ApplicationRunner {
     }
 
     private void initializeRoomCleaningTasks() {
-        List<Room> rooms = roomService.findAll();
+        List<Room> rooms = roomService.findAllList();
         List<Cleaner> cleaners = cleanerService.findAll();
 
         int taskCount = 0;
@@ -420,10 +427,10 @@ public class DataInitializer implements ApplicationRunner {
         System.out.println("Inventory Items: " + inventoryItemService.findAll().size());
         System.out.println("Room Types: " + roomTypeService.findAll().size());
         System.out.println("Season Rates: " + seasonRateService.findAll().size());
-        System.out.println("Rooms: " + roomService.findAll().size());
-        System.out.println("Guests: " + guestService.findAll().size());
-        System.out.println("Reservations: " + reservationService.findAll().size());
-        System.out.println("Bills: " + billService.findAll().size());
+        System.out.println("Rooms: " + roomService.findAllList().size());
+        System.out.println("Guests: " + guestService.findAllList().size());
+        System.out.println("Reservations: " + reservationService.findAllList().size());
+        System.out.println("Bills: " + billService.findAllList().size());
         System.out.println("Bill Items: " + billItemService.findAll().size());
         System.out.println("Room Cleaning Tasks: " + roomCleaningTaskService.findAll().size());
         System.out.println("Room Cleaning Assignments: " + roomCleaningAssignmentService.findAll().size());
