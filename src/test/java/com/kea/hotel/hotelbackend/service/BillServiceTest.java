@@ -113,8 +113,8 @@ class BillServiceTest {
     }
 
     @Test
-    @DisplayName("Should add bill item and update total")
-    void testAddItemToBill() {
+    @DisplayName("Should add bill item to bill")
+    void testAddItemToBillSavesItemForBill() {
         // Arrange
         when(billRepository.findById(1L)).thenReturn(Optional.of(testBill));
         when(billItemRepository.save(any(BillItem.class))).thenReturn(testBillItem);
