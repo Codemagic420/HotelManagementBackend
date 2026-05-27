@@ -114,6 +114,7 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
+        verifyAuthInfrastructure();
         initializeUsers();
 
         if (cleanerService.findAll().isEmpty()) {
@@ -133,6 +134,19 @@ public class DataInitializer implements ApplicationRunner {
         }
     }
 
+    private void verifyAuthInfrastructure() {
+        try {
+            long userCount = userRepository.count();
+            System.out.println("✓ Authentication repository available (" + userCount + " users found)");
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Authentication startup check failed: unable to access the user_account table. " +
+                            "Check the MySQL schema and connection before starting the app.",
+                    ex
+            );
+        }
+    }
+
     private void initializeUsers() {
         String adminPassword = System.getenv("MYSQL_ADMIN_PASSWORD") != null ?
             System.getenv("MYSQL_ADMIN_PASSWORD") : "admin123";
@@ -141,32 +155,27 @@ public class DataInitializer implements ApplicationRunner {
         String cleanerPassword = System.getenv("CLEANER_PASSWORD") != null ?
             System.getenv("CLEANER_PASSWORD") : "cleaner123";
 
-        if (userRepository.findByUsername("admin").isEmpty()) {
-            UserAccount admin = new UserAccount();
-            admin.setUsername("admin");
-            admin.setPasswordHash(passwordEncoder.encode(adminPassword));
-            admin.setRole(Role.ADMIN);
-            userRepository.save(admin);
-        }
-
-        if (userRepository.findByUsername("staff").isEmpty()) {
-            UserAccount staff = new UserAccount();
-            staff.setUsername("staff");
-            staff.setPasswordHash(passwordEncoder.encode(staffPassword));
-            staff.setRole(Role.STAFF);
-            userRepository.save(staff);
-        }
+        ensureUserExists("admin", adminPassword, Role.ADMIN);
+        ensureUserExists("staff", staffPassword, Role.STAFF);
 
         for (int i = 1; i <= 20; i++) {
             String username = "cleaner" + i;
-            if (userRepository.findByUsername(username).isEmpty()) {
-                UserAccount cleaner = new UserAccount();
-                cleaner.setUsername(username);
-                cleaner.setPasswordHash(passwordEncoder.encode(cleanerPassword));
-                cleaner.setRole(Role.CLEANER);
-                userRepository.save(cleaner);
-            }
+            ensureUserExists(username, cleanerPassword, Role.CLEANER);
         }
+
+        System.out.println("✓ Default auth users are present (admin, staff, cleaner1-20)");
+    }
+
+    private void ensureUserExists(String username, String password, Role role) {
+        if (userRepository.findByUsername(username).isPresent()) {
+            return;
+        }
+
+        UserAccount userAccount = new UserAccount();
+        userAccount.setUsername(username);
+        userAccount.setPasswordHash(passwordEncoder.encode(password));
+        userAccount.setRole(role);
+        userRepository.save(userAccount);
     }
 
     private void initializeCleaners() {
