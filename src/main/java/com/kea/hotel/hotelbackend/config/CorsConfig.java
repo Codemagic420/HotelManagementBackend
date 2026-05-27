@@ -14,9 +14,13 @@ public class CorsConfig implements WebMvcConfigurer {
                     "http://localhost:3000",    // React/Node dev server
                     "http://127.0.0.1:3001",    // Loopback IP
                     "http://localhost:5173",    // Vite dev server
-                    "http://localhost:8000"     // Alternative
+                    "http://localhost:8000",    // Alternative
+                    "http://127.0.0.1:5500",    // Common static server
+                    "http://localhost:5500",
+                    "null"                     // file:// origins appear as "null"
                 )
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")
                 .allowCredentials(true)
                 .maxAge(3600);
