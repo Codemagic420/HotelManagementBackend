@@ -31,9 +31,9 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-hotel_db}
 
     # Port mapping: host:container
-    # Default: 3306. Override with MYSQL_PORT=3307 to avoid local MySQL conflicts
+    # Default: 3307. Override with MYSQL_PORT if you need a different host port
     ports:
-      - "${MYSQL_PORT:-3306}:3306"
+      - "${MYSQL_PORT:-3307}:3306"
 
     # Volume mounts for persistence and initialization
     volumes:
