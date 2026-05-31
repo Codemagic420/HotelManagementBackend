@@ -1,0 +1,246 @@
+name: Hotel Management Backend - CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hotel_db
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 3306:3306
+
+      mongodb:
+        image: mongo:7
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 27017:27017
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Build with Maven
+      run: |
+        ./mvnw clean package -DskipTests \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/hotel_db \
+          -Dspring.datasource.username=root \
+          -Dspring.datasource.password=root \
+          -Dspring.mongodb.uri=mongodb://localhost:27017/hotel_db
+
+    - name: Run Unit Tests
+      run: |
+        ./mvnw test \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/hotel_db \
+          -Dspring.datasource.username=root \
+          -Dspring.datasource.password=root \
+          -Dspring.mongodb.uri=mongodb://localhost:27017/hotel_db
+
+    - name: Run Integration Tests
+      run: |
+        ./mvnw verify \
+          -DskipUnitTests \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/hotel_db \
+          -Dspring.datasource.username=root \
+          -Dspring.datasource.password=root \
+          -Dspring.mongodb.uri=mongodb://localhost:27017/hotel_db
+
+    - name: Generate Code Coverage Report
+      run: |
+        ./mvnw jacoco:report
+
+    - name: Upload Coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./target/site/jacoco/jacoco.xml
+        fail_ci_if_error: false
+
+    - name: Archive Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: surefire-reports
+        path: target/surefire-reports/
+
+    - name: Archive Code Coverage Report
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: jacoco-report
+        path: target/site/jacoco/
+
+    - name: Publish Test Results
+      if: always()
+      uses: EnricoMi/publish-unit-test-result-action@v2
+      with:
+        files: target/surefire-reports/**/*.xml
+        check_name: Unit Test Results
+
+  api-testing:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hotel_db
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 3306:3306
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Start Spring Boot Application
+      run: |
+        ./mvnw spring-boot:run \
+          -Dspring.datasource.url=jdbc:mysql://localhost:3306/hotel_db \
+          -Dspring.datasource.username=root \
+          -Dspring.datasource.password=root &
+        sleep 30
+
+    - name: Set up Node.js for Postman CLI
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Postman CLI
+      run: npm install -g newman
+
+    - name: Run API Tests with Newman
+      run: |
+        newman run Exam-Deliverables/7-API-Testing/Hotel-Management-API-Collection.json \
+          -e Exam-Deliverables/7-API-Testing/environment.json \
+          --reporters cli,json \
+          --reporter-json-export newman-results.json
+
+    - name: Archive API Test Results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-test-results
+        path: newman-results.json
+
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Java 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Run Static Analysis with Checkstyle
+      run: |
+        ./mvnw checkstyle:check
+
+    - name: Run SpotBugs
+      run: |
+        ./mvnw spotbugs:check
+
+    - name: SonarQube Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build-docker:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, api-testing, code-quality]
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Build Docker Image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: false
+        tags: hotel-management-backend:latest
+
+  final-report:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, api-testing, code-quality]
+    if: always()
+
+    steps:
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v3
+
+    - name: Generate CI Report
+      run: |
+        echo "=== Hotel Management Backend - CI/CD Pipeline Report ===" > ci-report.txt
+        echo "Date: $(date)" >> ci-report.txt
+        echo "" >> ci-report.txt
+        echo "Build Status: ${{ job.status }}" >> ci-report.txt
+        echo "Commit: ${{ github.sha }}" >> ci-report.txt
+        echo "Branch: ${{ github.ref }}" >> ci-report.txt
+        echo "Author: ${{ github.actor }}" >> ci-report.txt
+        echo "" >> ci-report.txt
+        echo "Test Artifacts Generated:" >> ci-report.txt
+        ls -la surefire-reports/ >> ci-report.txt 2>/dev/null || echo "No test reports" >> ci-report.txt
+        echo "" >> ci-report.txt
+        echo "Coverage Report Generated:" >> ci-report.txt
+        ls -la jacoco-report/ >> ci-report.txt 2>/dev/null || echo "No coverage report" >> ci-report.txt
+
+    - name: Upload Final Report
+      uses: actions/upload-artifact@v3
+      with:
+        name: ci-report
+        path: ci-report.txt
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: final-report
+    if: always()
+
+    steps:
+    - name: Notification - All Tests Complete
+      run: echo "CI/CD Pipeline Complete - All tests and builds finished"

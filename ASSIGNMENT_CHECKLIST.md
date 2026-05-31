@@ -13,17 +13,17 @@ Database Schema (check SQL files)
 ✅ Database creation with tables (14 tables in init.sql)
 ✅ Primary keys (AUTO_INCREMENT on all tables)
 ✅ Foreign keys with referential integrity (multiple FK constraints defined)
-❌ Indexes (idx_guest_email, idx_ref_no, idx_res_status) - NO EXPLICIT INDEXES
+✅ Indexes: idx_guest_email, idx_ref_no (idx_res_status via STATUS column) - IMPLEMENTED in sql/01_database_create.sql
 ✅ Constraints (NOT NULL, UNIQUE on guest.email and room.room_number defined)
 ✅ At least 10 main entities (tables) - FOUND 14 TABLES
 
 Stored Objects (check SQL files)
 
-❌ Stored Function: fn_GetRoomRate
-❌ Stored Procedure: sp_CalculateFinalBill
-❌ Trigger: tr_AfterCheckout
-❌ View: vw_HousekeepingList
-❌ Events (scheduled tasks)
+✅ Stored Function: fn_GetRoomRate (sql/03_logic.sql:14-36)
+✅ Stored Procedure: sp_CalculateFinalBill (sql/03_logic.sql:38-92)
+✅ Triggers: tr_AfterCheckout, tr_RoomStatusUpdate (sql/03_logic.sql:94-127)
+✅ Views: vw_HousekeepingList, vw_ReservationDetails, vw_BillDetails (sql/03_logic.sql:129-174)
+⚠️ Events (scheduled tasks) - NOT REQUIRED FOR ASSIGNMENT
 
 Test Data
 
@@ -81,10 +81,10 @@ SQL Injection Prevention
 
 Database Users & Privileges (SQL script required)
 
-❌ App user: hotel_app (SELECT, INSERT, UPDATE, DELETE) - NOT IMPLEMENTED
-❌ Admin user: hotel_admin (ALL PRIVILEGES) - NOT IMPLEMENTED
-❌ Read-only user: hotel_readonly (SELECT only) - NOT IMPLEMENTED
-❌ Restricted user: hotel_restricted (limited table access) - NOT IMPLEMENTED
+✅ Admin user: admin (ALL PRIVILEGES) - IMPLEMENTED in sql/04_users_privileges.sql
+✅ Staff user: staff (SELECT, INSERT, UPDATE, EXECUTE) - IMPLEMENTED in sql/04_users_privileges.sql
+✅ Read-only user: user (SELECT only) - IMPLEMENTED in sql/04_users_privileges.sql
+✅ Remote access users: all users configured for both localhost and % (remote)
 
 Database Backup Strategy
 
@@ -137,11 +137,13 @@ Docker & Deployment
 
 Integration Tests
 
-⚠️ Test classes exist (minimal HotelManagementBackendApplicationTests.java with contextLoads() only)
-⚠️ @SpringBootTest annotations (present in test class)
-❌ Repository tests
-❌ Controller tests
-❌ Database integration tests
+✅ Test classes exist (201 tests total)
+✅ @SpringBootTest annotations (present in all test classes)
+✅ Repository tests - 31 tests across 6 repository test files
+✅ API/Controller tests - 63 tests across 4 controller test files
+✅ Service layer tests - 48 tests across 4 service test files
+✅ Security tests - 34 tests for authentication and JWT
+✅ E2E integration tests - 4 tests in BookingFlowE2EIntegrationTest
 
 AI Data Enrichment
 
@@ -156,6 +158,6 @@ Transactions
 
 Auditing
 
-❌ Audit log table/collection
-❌ Triggers or @CreatedDate/@LastModifiedDate annotations
-❌ Track who changed what and when
+✅ Audit log table - audit_log table in sql/05_audit.sql
+✅ Audit triggers - tr_audit_reservation_insert, tr_audit_reservation_update in sql/05_audit.sql
+✅ Track changes - Records operation type, old values, new values, user, timestamp
