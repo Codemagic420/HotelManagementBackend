@@ -1,6 +1,8 @@
 package com.kea.hotel.hotelbackend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,12 +15,16 @@ public class Guest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long guestId;
 
+    @NotBlank
     @Column(nullable = false, length = 100)
     private String firstName;
 
+    @NotBlank
     @Column(nullable = false, length = 100)
     private String lastName;
 
+    @NotBlank
+    @Email
     @Column(unique = true, nullable = false, length = 150)
     private String email;
 

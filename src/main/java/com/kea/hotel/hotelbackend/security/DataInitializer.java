@@ -256,6 +256,10 @@ public class DataInitializer implements ApplicationRunner {
             room.setCleanStatus(cleanStatuses[random.nextInt(cleanStatuses.length)]);
             room.setOccupied(random.nextBoolean());
             room.setType(room.getRoomType().getName());
+            // avoid duplicate room numbers if present (defensive for repeated runs)
+            if (roomService.findByRoomNumber(room.getRoomNumber()).isPresent()) {
+                continue;
+            }
             roomService.save(room);
         }
         System.out.println("✓ Created 110 rooms");

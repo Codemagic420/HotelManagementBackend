@@ -3,7 +3,9 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.service.RoomService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -30,8 +32,9 @@ public class RoomController {
     }
 
     @PostMapping
-    public Room createRoom(@RequestBody Room room) {
-        return service.save(room);
+    public ResponseEntity<Room> createRoom(@Valid @RequestBody Room room) {
+        Room saved = service.save(room);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     @PutMapping("/{id}")

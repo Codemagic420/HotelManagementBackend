@@ -24,7 +24,23 @@ public class RoomService {
         return repo.findById(id);
     }
 
+    public Optional<Room> findByRoomNumber(String roomNumber) {
+        return repo.findByRoomNumber(roomNumber);
+    }
+
     public Room save(Room room) {
+        if (room.getRoomNumber() != null) {
+            return repo.findByRoomNumber(room.getRoomNumber())
+                    .map(existing -> {
+                        existing.setRoomStatus(room.getRoomStatus());
+                        existing.setCleanStatus(room.getCleanStatus());
+                        existing.setOccupied(room.getOccupied());
+                        existing.setRoomType(room.getRoomType());
+                        existing.setType(room.getType());
+                        return repo.save(existing);
+                    })
+                    .orElseGet(() -> repo.save(room));
+        }
         return repo.save(room);
     }
 

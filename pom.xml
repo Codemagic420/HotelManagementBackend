@@ -101,6 +101,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Bean Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- ==================== TESTING DEPENDENCIES ==================== -->
         
         <!-- JUnit 5 & Spring Boot Test -->
@@ -109,6 +115,20 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- Ensure test autoconfiguration and test utilities are available -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test-autoconfigure</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Add explicit web autoconfigure slice for tests (Spring Boot 4 modularization) -->
+        
 
         <!-- JUnit 5 Parameterized Tests (for boundary value testing) -->
         <dependency>
@@ -126,6 +146,13 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security test utilities -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
 

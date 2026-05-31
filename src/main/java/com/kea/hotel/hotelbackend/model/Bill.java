@@ -1,5 +1,6 @@
 package com.kea.hotel.hotelbackend.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,8 @@ public class Bill {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long billId;
 
-    @OneToOne
-    @JoinColumn(name = "reservation_id", unique = true, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
     @Column(nullable = false)
@@ -25,5 +26,22 @@ public class Bill {
     private LocalDateTime closedAt;
 
     @Column(nullable = false)
+    private BigDecimal roomCharge = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal taxAmount = BigDecimal.ZERO;
+
+    @Column(nullable = false)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    @Column(length = 50)
+    private String billStatus = "PENDING";
+
+    @Column(nullable = false)
     private BigDecimal totalAmount = BigDecimal.ZERO;
+
+    @JsonProperty("reservationId")
+    public Long getReservationId() {
+        return reservation != null ? reservation.getReservationId() : null;
+    }
 }

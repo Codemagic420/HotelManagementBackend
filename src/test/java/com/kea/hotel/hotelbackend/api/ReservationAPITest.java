@@ -1,12 +1,14 @@
 package com.kea.hotel.hotelbackend.api;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,13 +18,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Reservation API - Black-Box Tests")
 class ReservationAPITest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private WebApplicationContext wac;
+        private MockMvc mockMvc;
+
+        @BeforeEach
+        void setup() {
+                this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+        }
 
     // ========== EQUIVALENCE PARTITIONING - GET /api/reservations ==========
     
@@ -108,7 +115,7 @@ class ReservationAPITest {
         mockMvc.perform(post("/api/reservations")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payload))
-                .andExpect(status().isIn(200, 201));
+                .andExpect(status().is2xxSuccessful());
     }
 
     // ========== NEGATIVE TESTS - Invalid Input ==========

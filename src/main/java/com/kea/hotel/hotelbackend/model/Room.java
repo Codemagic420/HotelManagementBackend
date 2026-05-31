@@ -1,6 +1,8 @@
 package com.kea.hotel.hotelbackend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -13,10 +15,12 @@ public class Room {
     private Long roomId;
 
     @Column(unique = true)
+    @NotBlank(message = "roomNumber is required")
     private String roomNumber;
 
     @ManyToOne
     @JoinColumn(name = "room_type_id", nullable = false)
+    @NotNull(message = "roomType is required")
     private RoomType roomType;
 
     @Column(nullable = false, length = 20)

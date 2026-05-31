@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ReservationGuestRepository extends JpaRepository<ReservationGuest, ReservationGuestKey> {
+	void deleteByGuest_GuestId(Long guestId);
 }

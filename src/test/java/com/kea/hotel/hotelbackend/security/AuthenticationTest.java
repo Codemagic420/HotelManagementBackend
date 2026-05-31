@@ -1,12 +1,15 @@
 package com.kea.hotel.hotelbackend.security;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,13 +19,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Authentication & Authorization - Black-Box Tests")
 class AuthenticationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private WebApplicationContext wac;
+        private MockMvc mockMvc;
+
+        @BeforeEach
+        void setup() {
+                this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).apply(springSecurity()).build();
+        }
 
     // ========== EQUIVALENCE PARTITIONING - Login ==========
     
@@ -62,12 +70,12 @@ class AuthenticationTest {
 
     // ========== BOUNDARY VALUE ANALYSIS - Password Length ==========
     
-    @ParameterizedTest(name = "Invalid password: {0}")
-    @CsvSource({
-        "admin, tooshort",
-        "admin, ''",
-        "admin, wrongpass"
-    })
+        @ParameterizedTest(name = "Invalid password: {0}")
+        @CsvSource({
+                "admin,tooshort",
+                "admin,''",
+                "admin,wrongpass"
+        })
     @DisplayName("TC-A3: Login with invalid password")
     void testLogin_InvalidPassword(String username, String password) throws Exception {
         String payload = String.format("""
@@ -85,12 +93,12 @@ class AuthenticationTest {
 
     // ========== BOUNDARY VALUE ANALYSIS - Username ==========
     
-    @ParameterizedTest(name = "Invalid username: {0}")
-    @CsvSource({
-        "nonexistent",
-        "",
-        "user@123"
-    })
+        @ParameterizedTest(name = "Invalid username: {0}")
+        @CsvSource({
+                "nonexistent",
+                "''",
+                "user@123"
+        })
     @DisplayName("TC-A4: Login with invalid username")
     void testLogin_InvalidUsername(String username) throws Exception {
         String payload = String.format("""
@@ -159,7 +167,24 @@ class AuthenticationTest {
     @Test
     @DisplayName("TC-A6: Access admin endpoint with staff token - Should return 403")
     void testAccessAdmin_StaffRole_Forbidden() throws Exception {
+        String payload = """
+                {
+                  "username": "staff",
+                  "password": "staff123"
+                }
+                """;
+
+        var loginResult = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payload))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = com.jayway.jsonpath.JsonPath.read(
+            loginResult.getResponse().getContentAsString(), "$.token");
+
         mockMvc.perform(get("/api/admin/users")
+                .header("Authorization", "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
