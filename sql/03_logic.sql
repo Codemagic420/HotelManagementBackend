@@ -203,14 +203,15 @@ GROUP BY b.bill_id;
 
 -- ============================================
 -- INDEX: Performance Optimization for Queries
+-- Crucial: Fixed syntax to match native MySQL 8.0 criteria
 -- ============================================
-CREATE INDEX IF NOT EXISTS idx_reservation_dates
+CREATE INDEX idx_reservation_dates
     ON reservation(check_in_date, check_out_date);
 
-CREATE INDEX IF NOT EXISTS idx_bill_reservation
+CREATE INDEX idx_bill_reservation
     ON bill(reservation_id);
 
-CREATE INDEX IF NOT EXISTS idx_guest_email_phone
+CREATE INDEX idx_guest_email_phone
     ON guest(email, phone);
 
 -- ============================================
