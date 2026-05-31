@@ -203,19 +203,21 @@ GROUP BY b.bill_id;
 
 -- ============================================
 -- INDEX: Performance Optimization for Queries
--- Crucial: Fixed syntax to match native MySQL 8.0 criteria
+-- Using IF EXISTS to ensure the script is idempotent
 -- ============================================
 
--- Handle idx_reservation_dates
--- ALTER TABLE reservation DROP INDEX idx_reservation_dates;
+-- 1. Reservation Dates
+ALTER TABLE reservation DROP INDEX IF EXISTS idx_reservation_dates;
 ALTER TABLE reservation ADD INDEX idx_reservation_dates (check_in_date, check_out_date);
 
--- Handle idx_bill_reservation
--- ALTER TABLE bill DROP INDEX idx_bill_reservation;
+-- 2. Bill Reservation
+ALTER TABLE bill DROP INDEX IF EXISTS idx_bill_reservation;
 ALTER TABLE bill ADD INDEX idx_bill_reservation (reservation_id);
 
--- Handle idx_guest_email_phone
--- ALTER TABLE guest DROP INDEX idx_guest_email_phone; 
+-- 3. Guest Email/Phone
+-- We use IF EXISTS to safely clean up any previous failed attempts,
+-- then recreate it fresh.
+ALTER TABLE guest DROP INDEX IF EXISTS idx_guest_email_phone;
 ALTER TABLE guest ADD INDEX idx_guest_email_phone (email, phone);
 
 -- ============================================
