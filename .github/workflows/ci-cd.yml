@@ -7,24 +7,22 @@ on:
     branches: [ master, develop ]
 
 jobs:
-  # ========== TEST JOB ==========
   test:
     runs-on: ubuntu-latest
-    
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:8.0.46
         env:
-          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: hotel_db
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -proot"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-        ports:
-          - 3307:3306
-      
+          
       mongodb:
         image: mongo:6.0
         env:
