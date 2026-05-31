@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hotelbackend:dev
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+
+  frontend:
+    build:
+      context: ../frontend
+    image: hotelfrontend:dev
+    ports:
+      - "3000:3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ../frontend:/usr/src/app
+    depends_on:
+      - backend
+
+  llm-assistant:
+    image: ghcr.io/huggingface/text-generation-inference:latest
+    container_name: llm-assistant
+    ports:
+      - "8081:8080"
+    environment:
+      - SERVER_THREADS=8
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=hotel_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data: {}
