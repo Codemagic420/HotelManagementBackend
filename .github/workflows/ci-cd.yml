@@ -84,8 +84,16 @@ jobs:
         env:
           MYSQL_HOST: localhost
           MYSQL_PORT: 3307
+          MYSQL_DATABASE: hotel_db
           MYSQL_USER: root
           MYSQL_PASSWORD: root
+          MONGODB_USER: admin
+          MONGODB_PASSWORD: admin123
+          MONGODB_HOST: localhost
+          MONGODB_PORT: 27017
+          MONGODB_DATABASE: hotel_db
+          NEO4J_HOST: localhost
+          NEO4J_PORT: 7687
 
       - name: Generate JaCoCo Coverage Report
         run: ./mvnw jacoco:report
