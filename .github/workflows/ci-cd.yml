@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Hotel Management Backend
+name: CI/CD Pipeline - Hotel Management Backend V2
 
 on:
   push:
@@ -7,22 +7,24 @@ on:
     branches: [ master, develop ]
 
 jobs:
+  # ========== TEST JOB ==========
   test:
     runs-on: ubuntu-latest
+    
     services:
       mysql:
-        image: mysql:8.0.46
+        image: mysql:8.0
         env:
-          MYSQL_DATABASE: hotel_db
           MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
+          MYSQL_DATABASE: hotel_db
         options: >-
-          --health-cmd="mysqladmin ping -proot"
+          --health-cmd="mysqladmin ping"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-          
+        ports:
+          - 3307:3306
+      
       mongodb:
         image: mongo:6.0
         env:
@@ -63,6 +65,14 @@ jobs:
       - name: Initialize MySQL Database Schema
         run: |
           sudo apt-get update && sudo apt-get install -y mysql-client
+          
+          echo "Waiting for MySQL network port to become completely available..."
+          until mysqladmin ping -h 127.0.0.1 -P 3307 -u root -proot --silent; do
+            echo "Database engine is booting up... pausing for 2 seconds"
+            sleep 2
+          done
+          echo "MySQL port verified! Executing target script list..."
+          
           mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/01_database_create.sql
           mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/02_test_data.sql
           mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/03_logic.sql
