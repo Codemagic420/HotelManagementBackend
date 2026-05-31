@@ -43,7 +43,6 @@ jobs:
         env:
           NEO4J_AUTH: neo4j/yourpassword
           NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
-        # Updated native health check using bash network sockets:
         options: >-
           --health-cmd="bash -c 'cat < /dev/null > /dev/tcp/localhost/7474' || exit 1"
           --health-interval=10s
@@ -63,14 +62,28 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Initialize MySQL Database Schema
+        run: |
+          sudo apt-get update && sudo apt-get install -y mysql-client
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/01_database_create.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/02_test_data.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/03_logic.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/04_users_privileges.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/05_audit.sql
+
       - name: Run Unit & Integration Tests
         run: ./mvnw clean test -DskipTests=false
+        env:
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3307
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
 
       - name: Generate JaCoCo Coverage Report
         run: ./mvnw jacoco:report
 
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4      
         with:
           files: ./target/site/jacoco/jacoco.xml
           flags: unittests
@@ -97,7 +110,7 @@ jobs:
         run: ./mvnw clean package -DskipTests
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4      
         with:
           name: hotel-backend-jar
           path: target/hotelbackend-*.jar
@@ -148,7 +161,7 @@ jobs:
       - name: Run Checkstyle
         run: ./mvnw checkstyle:check
 
-  # ========== DOCKER BUILD (Optional) ==========
+  # ========== DOCKER BUILD ==========
   docker:
     runs-on: ubuntu-latest
     needs: build
