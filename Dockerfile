@@ -1,4 +1,4 @@
-FROM openjdk:21 AS build
+FROM openjdk:21-jdk AS build
 WORKDIR /app
 
 # copy pom and wrapper first for caching
