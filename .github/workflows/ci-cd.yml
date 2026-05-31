@@ -43,8 +43,9 @@ jobs:
         env:
           NEO4J_AUTH: neo4j/yourpassword
           NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+        # Updated native health check using bash network sockets:
         options: >-
-          --health-cmd="curl -f http://localhost:7474 || exit 1"
+          --health-cmd="bash -c 'cat < /dev/null > /dev/tcp/localhost/7474' || exit 1"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
