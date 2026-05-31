@@ -203,22 +203,17 @@ GROUP BY b.bill_id;
 
 -- ============================================
 -- INDEX: Performance Optimization for Queries
--- Using IF EXISTS to ensure the script is idempotent
+-- Using IF NOT EXISTS to ensure idempotent creation
 -- ============================================
 
--- 1. Reservation Dates
-ALTER TABLE reservation DROP INDEX IF EXISTS idx_reservation_dates;
-ALTER TABLE reservation ADD INDEX idx_reservation_dates (check_in_date, check_out_date);
+-- 1. Reservation Dates Index
+CREATE INDEX IF NOT EXISTS idx_reservation_dates ON reservation (check_in_date, check_out_date);
 
--- 2. Bill Reservation
-ALTER TABLE bill DROP INDEX IF EXISTS idx_bill_reservation;
-ALTER TABLE bill ADD INDEX idx_bill_reservation (reservation_id);
+-- 2. Bill Reservation Index
+CREATE INDEX IF NOT EXISTS idx_bill_reservation ON bill (reservation_id);
 
--- 3. Guest Email/Phone
--- We use IF EXISTS to safely clean up any previous failed attempts,
--- then recreate it fresh.
-ALTER TABLE guest DROP INDEX IF EXISTS idx_guest_email_phone;
-ALTER TABLE guest ADD INDEX idx_guest_email_phone (email, phone);
+-- 3. Guest Email/Phone Index
+CREATE INDEX IF NOT EXISTS idx_guest_email_phone ON guest (email, phone);
 
 -- ============================================
 -- End of Business Logic
