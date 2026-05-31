@@ -15,6 +15,8 @@ services:
       - ./:/app
 
   frontend:
+    profiles:
+      - frontend
     build:
       context: ../frontend
     image: hotelfrontend:dev
@@ -28,6 +30,8 @@ services:
       - backend
 
   llm-assistant:
+    profiles:
+      - llm
     image: ghcr.io/huggingface/text-generation-inference:latest
     container_name: llm-assistant
     ports:
@@ -42,7 +46,7 @@ services:
       - MYSQL_ROOT_PASSWORD=secret
       - MYSQL_DATABASE=hotel_db
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
 
