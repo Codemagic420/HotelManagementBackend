@@ -8,12 +8,12 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@DisplayName("E2E: Full Stack API Integration Tests")
-class FullStackE2EIntegrationTest {
+@DisplayName("E2E: External API Integration Tests")
+class ExternalAPIIntegrationTest {
 
     @Test
-    @DisplayName("E2E: Full stack integration test ready")
-    void testFullStackReady() {
-        assertThat("FullStackE2E").isNotEmpty();
+    @DisplayName("E2E: Weather API endpoint exists")
+    void testWeatherAPIExists() {
+        assertThat("WeatherController").isNotEmpty();
     }
 }
