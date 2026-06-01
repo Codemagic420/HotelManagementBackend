@@ -22,14 +22,18 @@ import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DisplayName("E2E: Complete Booking Flow")
 class BookingFlowE2EIntegrationTest {
 
+    @org.springframework.beans.factory.annotation.Value("${local.server.port}")
+    private int port;
+
+    private String getBaseUrl() { return "http://localhost:" + port; }
+
     private WebDriver driver;
     private WebDriverWait wait;
-    private final String BASE_URL = "http://localhost:8080";
 
     @BeforeEach
     void setUp() {
@@ -52,12 +56,12 @@ class BookingFlowE2EIntegrationTest {
     @DisplayName("Should complete full booking flow: auth -> search rooms -> create reservation -> view bill")
     void testCompleteBookingFlow() {
         // Step 1: Navigate to application
-        driver.get(BASE_URL + "/swagger-ui.html");
+        driver.get(getBaseUrl() + "/swagger-ui.html");
         assertThat(driver.getTitle()).matches(".*(Swagger|Explore).*");
 
         // Step 2: Verify API endpoints are accessible by fetching the OpenAPI JSON directly (more deterministic)
         try {
-            URL u = new URL(BASE_URL + "/v3/api-docs");
+            URL u = new URL(getBaseUrl() + "/v3/api-docs");
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(5000);
@@ -87,7 +91,7 @@ class BookingFlowE2EIntegrationTest {
     @DisplayName("Should access public API endpoints without authentication")
     void testPublicAPIAccess() {
         // Navigate to Swagger UI
-        driver.get(BASE_URL + "/swagger-ui.html");
+        driver.get(getBaseUrl() + "/swagger-ui.html");
 
         // Verify API documentation loads
         assertThat(driver.getCurrentUrl()).contains("swagger-ui");
@@ -100,7 +104,7 @@ class BookingFlowE2EIntegrationTest {
     @Test
     @DisplayName("Should show API endpoints organization")
     void testAPIEndpointsOrganization() {
-        driver.get(BASE_URL + "/swagger-ui.html");
+        driver.get(getBaseUrl() + "/swagger-ui.html");
 
         // Wait for page to fully load
         wait.until(d -> {
@@ -127,7 +131,7 @@ class BookingFlowE2EIntegrationTest {
     @Test
     @DisplayName("Should verify API works with HTTP status codes")
     void testAPIStatusCodes() {
-        driver.get(BASE_URL + "/swagger-ui.html");
+        driver.get(getBaseUrl() + "/swagger-ui.html");
 
         // Verify Swagger loads successfully (200 OK)
         assertThat(driver.getPageSource()).isNotEmpty();
