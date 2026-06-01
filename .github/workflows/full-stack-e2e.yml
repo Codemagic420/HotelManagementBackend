@@ -50,7 +50,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sophus-ingi/HotelManagementFrontend
-          token: ${{ secrets.GH_PAT }}
           path: frontend
 
       # 3. Setup the environments (Java & Node)
