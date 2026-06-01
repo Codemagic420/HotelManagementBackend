@@ -1,0 +1,79 @@
+// MongoDB Collections Structure - Hotel Management System
+// Actual data samples exported from hotel_db
+
+// ====================================
+// RESERVATIONS Collection - Example Document
+// Shows denormalized guest and room data embedded in reservation
+// ====================================
+{
+  "_id": ObjectId("6a153aa70325f164b719f0cd"),
+  "reservationId": 1,
+  "status": "CONFIRMED",
+  "checkInDate": "2026-05-05",
+  "checkOutDate": "2026-05-07",
+  "guest": {
+    "guestId": 1,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john.doe@example.com"
+  },
+  "room": {
+    "roomId": 1,
+    "roomNumber": "101",
+    "type": "Single"
+  }
+}
+
+// ====================================
+// ROOMS Collection - Example Document
+// Stores room information for quick lookup
+// ====================================
+{
+  "_id": ObjectId("6a153aa70325f164b719f0a0"),
+  "roomId": 1,
+  "roomNumber": "101",
+  "type": "Single",
+  "occupied": false
+}
+
+// ====================================
+// BILLS Collection - Example Document
+// Shows denormalized line items embedded in bill
+// ====================================
+{
+  "_id": ObjectId("6a153aa70325f164b719f145"),
+  "billId": 1,
+  "reservationId": 1,
+  "totalAmount": "160.00",
+  "closedAt": "2026-05-07T11:00",
+  "items": [
+    {
+      "billItemId": 1,
+      "itemType": "ROOM_CHARGE",
+      "description": "Single Room - 2 nights",
+      "quantity": 2,
+      "unitPrice": "80.00",
+      "lineTotal": "160.00",
+      "postedAt": "2026-05-07T11:00"
+    }
+  ]
+}
+
+// ====================================
+// Design Pattern Notes
+// ====================================
+// 1. DENORMALIZATION: Guest data is embedded in Reservation document
+//    - No JOIN needed to read guest info
+//    - Data is synchronized from MySQL during migration
+//    - Trade-off: Update guest info requires updating both guest collection and all reservation documents
+//
+// 2. EMBEDDED ARRAYS: Bill items are embedded in Bill document
+//    - All billing information in one document
+//    - Atomic reads and writes at document level
+//    - Fast dashboard queries without JOINs
+//
+// 3. DATA SYNCHRONIZATION:
+//    - MongoDB serves as cache layer, not authoritative source
+//    - MySQL is primary database
+//    - Data migrated one-way from MySQL to MongoDB
+//    - Migration is idempotent - can be re-run to refresh cache
