@@ -2,9 +2,9 @@ name: CI/CD Pipeline - Hotel Management Backend V2
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, examasger ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, examasger ]
 
 jobs:
   # ========== TEST JOB ==========

@@ -2,9 +2,9 @@ name: Full Stack E2E Tests
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, examasger ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, examasger ]
 
 jobs:
   backend-e2e:
