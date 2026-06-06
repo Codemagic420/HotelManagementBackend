@@ -1,0 +1,52 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+target
+build
+dist
+*.jar
+*.war
+
+# Documentation
+docs
+README.md
+*.md
+
+# Test files
+app-startup.log
+app-test.log
+app-final-test.log
+test-results.txt
+performance-test-results.json
+
+# Logs
+logs
+*.log
+
+# Node (if any frontend)
+node_modules
+npm-debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
