@@ -28,7 +28,8 @@ public class Neo4jBillItemService {
                 .map(existing -> {
                     existing.setReservationId(bill.getReservationId());
                     existing.setTotalAmount(bill.getTotalAmount());
-                    existing.setStatus(bill.getStatus());
+                    existing.setOpenedAt(bill.getOpenedAt());
+                    existing.setClosedAt(bill.getClosedAt());
                     return repository.save(existing);
                 })
                 .orElse(null);
