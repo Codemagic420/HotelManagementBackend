@@ -91,22 +91,32 @@ public class Neo4jDataInitializer implements ApplicationRunner {
     }
 
     private long waitForNeo4jConnection() throws Exception {
-        int maxRetries = 5;
-        int retryDelay = 2000; // 2 seconds
+        int maxRetries = 15;
+        int retryDelay = 3000; // 3 seconds
         Exception lastException = null;
 
         for (int i = 0; i < maxRetries; i++) {
             try {
-                return cleanerRepository.count();
+                long count = cleanerRepository.count();
+                System.out.println("✓ Neo4j connection successful");
+                return count;
+            } catch (NullPointerException e) {
+                lastException = e;
+                System.out.println("   ⏳ Neo4j initialization in progress... (attempt " + (i + 1) + "/" + maxRetries + ")");
+                if (i < maxRetries - 1) {
+                    Thread.sleep(retryDelay);
+                }
             } catch (Exception e) {
                 lastException = e;
+                System.out.println("   ⏳ Neo4j not ready yet, retrying... (attempt " + (i + 1) + "/" + maxRetries + ")");
+                System.out.println("      Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                 if (i < maxRetries - 1) {
-                    System.out.println("   ⏳ Neo4j not ready yet, retrying in " + (retryDelay / 1000) + "s... (attempt " + (i + 1) + "/" + maxRetries + ")");
                     Thread.sleep(retryDelay);
                 }
             }
         }
 
+        System.err.println("   ❌ Neo4j failed after " + maxRetries + " attempts (" + (maxRetries * retryDelay / 1000) + " seconds)");
         throw lastException;
     }
 
