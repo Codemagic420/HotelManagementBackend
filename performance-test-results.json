@@ -1,0 +1,511 @@
+{
+  "metrics": {
+    "http_req_duration{expected_response:true}": {
+      "contains": "time",
+      "values": {
+        "p(90)": 972.1289,
+        "p(95)": 1184.74775,
+        "avg": 349.58501819478516,
+        "min": 6.2799,
+        "med": 222.8902,
+        "max": 2311.591
+      },
+      "type": "trend"
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.9851157608695641,
+        "min": 0,
+        "med": 0.41059999999999997,
+        "max": 18.6019,
+        "p(90)": 3.0687400000000005,
+        "p(95)": 4.833969999999999
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "rate": 8621.461338141642,
+        "count": 2878173
+      }
+    },
+    "checks": {
+      "values": {
+        "passes": 20699,
+        "fails": 3221,
+        "rate": 0.8653428093645485
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 100,
+        "min": 100,
+        "max": 100
+      }
+    },
+    "http_reqs": {
+      "values": {
+        "count": 9200,
+        "rate": 27.558261546787875
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 2311.591,
+        "p(90)": 929.2901700000003,
+        "p(95)": 1144.689039999999,
+        "avg": 321.07695609782473,
+        "min": 1.3988,
+        "med": 157.9599
+      },
+      "thresholds": {
+        "p(99)<1000": {
+          "ok": false
+        },
+        "p(95)<500": {
+          "ok": false
+        }
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 2.7558261546787874,
+        "count": 920
+      }
+    },
+    "errors": {
+      "values": {
+        "rate": 1,
+        "passes": 3118,
+        "fails": 0
+      },
+      "thresholds": {
+        "rate<0.1": {
+          "ok": false
+        }
+      },
+      "type": "rate",
+      "contains": "default"
+    },
+    "group_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 1178.8507499999998,
+        "avg": 340.0551724758447,
+        "min": 1.3988,
+        "med": 202.4401,
+        "max": 2324.4432,
+        "p(90)": 967.4120000000003
+      }
+    },
+    "iteration_duration": {
+      "contains": "time",
+      "values": {
+        "avg": 10267.421351739138,
+        "min": 7619.6653,
+        "med": 8332.55465,
+        "max": 18364.5167,
+        "p(90)": 15307.41637,
+        "p(95)": 16100.537095
+      },
+      "type": "trend"
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 1142.3324799999998,
+        "avg": 320.06565607608644,
+        "min": 1.3988,
+        "med": 155.7585,
+        "max": 2310.3637,
+        "p(90)": 928.31973
+      }
+    },
+    "http_req_connecting": {
+      "values": {
+        "min": 0,
+        "med": 0,
+        "max": 10.3066,
+        "p(90)": 0,
+        "p(95)": 0.5484049999999999,
+        "avg": 0.07442868478260872
+      },
+      "type": "trend",
+      "contains": "time"
+    },
+    "http_req_failed": {
+      "thresholds": {
+        "rate<0.1": {
+          "ok": false
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 7711,
+        "rate": 0.16184782608695653,
+        "passes": 1489
+      }
+    },
+    "http_req_blocked": {
+      "contains": "time",
+      "values": {
+        "max": 10.3066,
+        "p(90)": 0.5052,
+        "p(95)": 0.5701149999999998,
+        "avg": 0.08666404347826086,
+        "min": 0,
+        "med": 0
+      },
+      "type": "trend"
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.026184260869565233,
+        "min": 0,
+        "med": 0,
+        "max": 4.5909,
+        "p(90)": 0,
+        "p(95)": 0
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "max": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0
+      }
+    },
+    "api_duration": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "p(95)": 1171.1677649999997,
+        "avg": 334.3687564371965,
+        "min": 1.3988,
+        "med": 196.59155,
+        "max": 2311.591,
+        "p(90)": 961.9374000000004
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 100
+      }
+    },
+    "data_received": {
+      "values": {
+        "count": 841434337,
+        "rate": 2520485.6014667447
+      },
+      "type": "counter",
+      "contains": "data"
+    }
+  },
+  "root_group": {
+    "checks": [
+      {
+        "name": "login status is 200",
+        "path": "::login status is 200",
+        "id": "baba87e761865dc93085ee0c1fe25f4c",
+        "passes": 920,
+        "fails": 0
+      },
+      {
+        "id": "682fc5235394eccc408ad30f55593a94",
+        "passes": 920,
+        "fails": 0,
+        "name": "response has token",
+        "path": "::response has token"
+      }
+    ],
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "groups": [],
+        "checks": [
+            {
+              "name": "status is 200",
+              "path": "::Guest Management - GET all guests::status is 200",
+              "id": "61d145a23bb594cece965c7d1d700044",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response is array",
+              "path": "::Guest Management - GET all guests::response is array",
+              "id": "47a43b8effd91380050bdf3a3b1a7886",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response time < 500ms",
+              "path": "::Guest Management - GET all guests::response time < 500ms",
+              "id": "0d7ab2f3bfe17ac6e2077234edd74443",
+              "passes": 714,
+              "fails": 206
+            }
+          ],
+        "name": "Guest Management - GET all guests",
+        "path": "::Guest Management - GET all guests",
+        "id": "06d06a248970260804b9f346d8136c3b"
+      },
+      {
+        "id": "29cb3c7d71b1ed988faf7310e6a32095",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::Guest Management - GET single guest::status is 200",
+              "id": "7794e30107099f84c0aa3307e3f0418b",
+              "passes": 920,
+              "fails": 0,
+              "name": "status is 200"
+            },
+            {
+              "fails": 0,
+              "name": "has guestId",
+              "path": "::Guest Management - GET single guest::has guestId",
+              "id": "0dc6c7c71c1d8a3f52cf8072e7c1100e",
+              "passes": 920
+            },
+            {
+              "name": "response time < 300ms",
+              "path": "::Guest Management - GET single guest::response time < 300ms",
+              "id": "685ccea260560dc1820d1e0d211bb559",
+              "passes": 611,
+              "fails": 309
+            }
+          ],
+        "name": "Guest Management - GET single guest",
+        "path": "::Guest Management - GET single guest"
+      },
+      {
+        "name": "Guest Management - CREATE guest",
+        "path": "::Guest Management - CREATE guest",
+        "id": "6403f8b09c52e9513daf50917c34d1de",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::Guest Management - CREATE guest::status is 201",
+              "id": "9532d06fe954eff6c0da68f3e74543a0",
+              "passes": 0,
+              "fails": 920,
+              "name": "status is 201"
+            },
+            {
+              "id": "c83fd0e9bf98ae4ea9eecf85e645d194",
+              "passes": 915,
+              "fails": 5,
+              "name": "has guestId",
+              "path": "::Guest Management - CREATE guest::has guestId"
+            },
+            {
+              "name": "response time < 800ms",
+              "path": "::Guest Management - CREATE guest::response time < 800ms",
+              "id": "94930f046620ece1addac3c74526b323",
+              "passes": 822,
+              "fails": 98
+            }
+          ]
+      },
+      {
+        "path": "::Room Management - GET all rooms",
+        "id": "3e1b9418438e755ad2b76792f7c50361",
+        "groups": [],
+        "checks": [
+            {
+              "name": "status is 200",
+              "path": "::Room Management - GET all rooms::status is 200",
+              "id": "1747cad73d04889c70ed01c0e5c0949e",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response is array",
+              "path": "::Room Management - GET all rooms::response is array",
+              "id": "846159e17d0538cfce164c989582727c",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response time < 500ms",
+              "path": "::Room Management - GET all rooms::response time < 500ms",
+              "id": "a91285fb7e642fc2ca366f6b4e0b78e5",
+              "passes": 727,
+              "fails": 193
+            }
+          ],
+        "name": "Room Management - GET all rooms"
+      },
+      {
+        "name": "Room Management - GET room by ID",
+        "path": "::Room Management - GET room by ID",
+        "id": "9f149bc1835e20d475329626d9033d6b",
+        "groups": [],
+        "checks": [
+            {
+              "name": "status is 200 or 404",
+              "path": "::Room Management - GET room by ID::status is 200 or 404",
+              "id": "f0636987b40d969b67b42de3abd985de",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response time < 300ms",
+              "path": "::Room Management - GET room by ID::response time < 300ms",
+              "id": "b31b932375f98968e070be2d26c3d3ec",
+              "passes": 634,
+              "fails": 286
+            }
+          ]
+      },
+      {
+        "checks": [
+          {
+            "path": "::Reservation - GET all reservations::status is 200",
+            "id": "ee1c81ae7400674e3a94cf2e46e546f1",
+            "passes": 920,
+            "fails": 0,
+            "name": "status is 200"
+          },
+          {
+            "name": "response is array",
+            "path": "::Reservation - GET all reservations::response is array",
+            "id": "7f51d12dab20e22ddcd14f09ccc77fb9",
+            "passes": 920,
+            "fails": 0
+          },
+          {
+            "id": "1a8acf9f0623d19c2562c72d143db3f4",
+            "passes": 467,
+            "fails": 453,
+            "name": "response time < 500ms",
+            "path": "::Reservation - GET all reservations::response time < 500ms"
+          }
+        ],
+        "name": "Reservation - GET all reservations",
+        "path": "::Reservation - GET all reservations",
+        "id": "7aeef8a421240357f4393e0507b5018a",
+        "groups": []
+      },
+      {
+        "name": "Reservation - CREATE reservation",
+        "path": "::Reservation - CREATE reservation",
+        "id": "45f5b4bcb37fbc8d205af1594ae994ec",
+        "groups": [],
+        "checks": [
+            {
+              "passes": 920,
+              "fails": 0,
+              "name": "status is 201 or 400",
+              "path": "::Reservation - CREATE reservation::status is 201 or 400",
+              "id": "39c816e91bf58c21f8864f20c4a1d753"
+            },
+            {
+              "name": "response time < 800ms",
+              "path": "::Reservation - CREATE reservation::response time < 800ms",
+              "id": "a957a3fde484379b9df0ece5460d1f0d",
+              "passes": 917,
+              "fails": 3
+            }
+          ]
+      },
+      {
+        "path": "::Bill Management - GET all bills",
+        "id": "a59293b00db11d0c80fe0b228171b84f",
+        "groups": [],
+        "checks": [
+            {
+              "id": "de5980a5c8ebcdc36cc93d5e058131ba",
+              "passes": 920,
+              "fails": 0,
+              "name": "status is 200",
+              "path": "::Bill Management - GET all bills::status is 200"
+            },
+            {
+              "name": "response is array",
+              "path": "::Bill Management - GET all bills::response is array",
+              "id": "3cbe9071b068867b7d776b5d9429bdd8",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "name": "response time < 500ms",
+              "path": "::Bill Management - GET all bills::response time < 500ms",
+              "id": "394308c6da96952f64cd6861b8ee68b5",
+              "passes": 478,
+              "fails": 442
+            }
+          ],
+        "name": "Bill Management - GET all bills"
+      },
+      {
+        "name": "Bill Management - GET bill by ID",
+        "path": "::Bill Management - GET bill by ID",
+        "id": "8953bb2f3625ffef41d9895ce598a076",
+        "groups": [],
+        "checks": [
+            {
+              "name": "status is 200 or 404",
+              "path": "::Bill Management - GET bill by ID::status is 200 or 404",
+              "id": "94483cd96f6bc3672315c4c508bbc3d4",
+              "passes": 920,
+              "fails": 0
+            },
+            {
+              "id": "33cb163e73e13d0615f8e03271d2108a",
+              "passes": 614,
+              "fails": 306,
+              "name": "response time < 300ms",
+              "path": "::Bill Management - GET bill by ID::response time < 300ms"
+            }
+          ]
+      }
+    ]
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": true,
+    "isStdErrTTY": true,
+    "testRunDurationMs": 333838.1844
+  }
+}
