@@ -3,13 +3,16 @@ package com.kea.hotel.hotelbackend.controller;
 import com.kea.hotel.hotelbackend.model.Bill;
 import com.kea.hotel.hotelbackend.model.BillItem;
 import com.kea.hotel.hotelbackend.service.BillService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/bills")
+@RequestMapping("/api/mysql/bills")
 public class BillController {
 
     private final BillService billService;
@@ -19,8 +22,8 @@ public class BillController {
     }
 
     @GetMapping
-    public List<Bill> getAllBills() {
-        return billService.getAllBills();
+    public Page<Bill> getAllBills(@PageableDefault(size = 20) Pageable pageable) {
+        return billService.getAllBills(pageable);
     }
 
     @GetMapping("/{id}")

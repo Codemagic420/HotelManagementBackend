@@ -2,13 +2,14 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.Guest;
 import com.kea.hotel.hotelbackend.service.GuestService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/guests")
+@RequestMapping("/api/mysql/guests")
 public class GuestController {
 
     private final GuestService service;
@@ -18,8 +19,10 @@ public class GuestController {
     }
 
     @GetMapping
-    public List<Guest> getAllGuests() {
-        return service.findAll();
+    public Page<Guest> getAllGuests(
+            @RequestParam(required = false) String lastName,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(lastName, pageable);
     }
 
     @GetMapping("/{id}")

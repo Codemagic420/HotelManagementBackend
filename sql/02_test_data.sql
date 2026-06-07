@@ -1046,53 +1046,6 @@ INSERT INTO inventory_item (name, unit_price, active) VALUES
 -- ============================================
 -- INSERT ADDITIONAL ROOM TYPES (for 100+ total)
 -- ============================================
-INSERT INTO room_type (name, max_occupancy) VALUES
-('Twin', 2), ('Studio', 1),
-('Penthouse', 6), ('Loft', 4),
-('Garden View', 2), ('City View', 2),
-('Sea View', 2), ('Mountain View', 2),
-('Corner Suite', 4), ('Executive', 2),
-('Presidential', 8), ('Family', 4),
-('Accessible', 2), ('Kid Friendly', 3),
-('Romance', 2), ('Business', 2),
-('Standard Queen', 2), ('Standard King', 2),
-('Premium Double', 2), ('Premium Suite', 4),
-('Luxury Double', 2), ('Luxury Suite', 4),
-('Grand Suite', 6), ('Royal Suite', 6),
-('Classic', 1), ('Modern', 2),
-('Contemporary', 2), ('Vintage', 1),
-('Minimalist', 1), ('Bohemian', 1),
-('Scandinavian', 2), ('Mediterranean', 2),
-('Tropical', 2), ('Desert', 2),
-('Arctic', 2), ('Forest', 2),
-('Beach', 2), ('Lakeside', 2),
-('Riverside', 2), ('Lakefront', 2),
-('Beachfront', 2), ('Valley View', 2),
-('Balcony View', 2), ('Terrace View', 2),
-('Patio View', 2), ('Atrium View', 2),
-('Interior', 1), ('Exterior', 2),
-('Ground Floor', 2), ('Top Floor', 2),
-('Mid Floor', 2), ('Basement', 1),
-('Penthouse Suite', 8), ('Sky Suite', 6),
-('Cloud Suite', 6), ('Star Suite', 4),
-('Moon Suite', 4), ('Sun Suite', 4),
-('Ocean View Suite', 4), ('Garden Suite', 4),
-('Park Suite', 4), ('Harbor Suite', 4),
-('City Suite', 4), ('Village Suite', 4),
-('Country Suite', 4), ('Castle Suite', 8),
-('Villa Suite', 6), ('Cottage Suite', 4),
-('Cabin Suite', 4), ('Bungalow Suite', 3),
-('Tent Suite', 2), ('Treehouse Suite', 2),
-('Houseboat Suite', 4), ('RV Suite', 2),
-('Camping', 2), ('Glamping', 3),
-('Eco Resort', 2), ('Eco Cabin', 2),
-('Green Room', 2), ('Sustainable', 2),
-('Eco Suite', 4), ('Renewable', 2),
-('Zero Waste', 2), ('Organic', 2),
-('Bio', 2), ('Natural', 2),
-('Pure', 1), ('Clean', 1),
-('Fresh', 1), ('Crisp', 1),
-('Serene', 2), ('Peaceful', 2);
 
 -- ============================================
 -- INSERT ADDITIONAL SEASON RATES (for 100+ total)
@@ -1167,89 +1120,76 @@ INSERT INTO season_rate (room_type_id, season, price_per_night, valid_from, vali
 -- ============================================
 -- INSERT ADDITIONAL USER ACCOUNTS (for 100+ total)
 -- ============================================
-INSERT INTO user_account (username, password_hash, role) VALUES
-('cleaner6', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner7', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner8', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner9', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner10', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner11', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner12', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner13', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner14', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner15', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner16', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner17', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner18', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner19', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner20', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner21', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner22', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner23', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner24', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner25', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('staff1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff3', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff4', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff5', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff6', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff7', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff8', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff9', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('staff10', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('manager1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager3', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager4', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager5', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager6', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager7', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager8', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager9', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('manager10', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'MANAGER'),
-('admin1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'ADMIN'),
-('admin2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'ADMIN'),
-('admin3', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'ADMIN'),
-('admin4', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'ADMIN'),
-('admin5', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'ADMIN'),
-('guest1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'GUEST'),
-('guest2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'GUEST'),
-('guest3', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'GUEST'),
-('guest4', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'GUEST'),
-('guest5', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'GUEST'),
-('housekeeping1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('housekeeping2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('maintenance1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('maintenance2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('security1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('security2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('concierge1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('concierge2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('frontdesk1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('frontdesk2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('spa1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF'),
-('spa2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'STAFF');
 
 -- ============================================
 -- INSERT ADDITIONAL ROOM CLEANING TASKS (for 100+ total)
 -- ============================================
-INSERT INTO room_cleaning_task (room_id, assigned_date, task_type, task_status, notes) VALUES
-(26, '2026-08-11 13:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned after checkout'),
-(27, '2026-08-12 12:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned'),
-(28, '2026-08-13 11:00:00', 'IN_PROGRESS', 'IN_PROGRESS', 'Currently being cleaned'),
-(29, '2026-08-14 10:00:00', 'PENDING', 'PENDING', 'Waiting for cleaner'),
-(30, '2026-08-15 09:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned'),
-(31, '2026-08-16 14:00:00', 'COMPLETED', 'COMPLETED', 'Maintenance cleaning'),
-(32, '2026-08-17 13:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned'),
-(33, '2026-08-18 12:00:00', 'IN_PROGRESS', 'IN_PROGRESS', 'Currently being cleaned'),
-(34, '2026-08-19 11:00:00', 'PENDING', 'PENDING', 'Waiting for cleaner'),
-(35, '2026-08-20 10:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned'),
-(36, '2026-08-21 15:00:00', 'COMPLETED', 'COMPLETED', 'Deep cleaning'),
-(37, '2026-08-22 14:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned'),
-(38, '2026-08-23 13:00:00', 'IN_PROGRESS', 'IN_PROGRESS', 'Currently being cleaned'),
-(39, '2026-08-24 12:00:00', 'PENDING', 'PENDING', 'Waiting for cleaner'),
-(40, '2026-08-25 11:00:00', 'COMPLETED', 'COMPLETED', 'Room cleaned');
+INSERT INTO room_cleaning_task (room_id, created_at, task_status, note) VALUES
+(26, '2026-08-11 13:00:00', 'COMPLETED', 'Room cleaned after checkout'),
+(27, '2026-08-12 12:00:00', 'COMPLETED', 'Room cleaned'),
+(28, '2026-08-13 11:00:00', 'IN_PROGRESS', 'Currently being cleaned'),
+(29, '2026-08-14 10:00:00', 'PENDING', 'Waiting for cleaner'),
+(30, '2026-08-15 09:00:00', 'COMPLETED', 'Room cleaned'),
+(31, '2026-08-16 14:00:00', 'COMPLETED', 'Maintenance cleaning'),
+(32, '2026-08-17 13:00:00', 'COMPLETED', 'Room cleaned'),
+(33, '2026-08-18 12:00:00', 'IN_PROGRESS', 'Currently being cleaned'),
+(34, '2026-08-19 11:00:00', 'PENDING', 'Waiting for cleaner'),
+(35, '2026-08-20 10:00:00', 'COMPLETED', 'Room cleaned'),
+(36, '2026-08-21 15:00:00', 'COMPLETED', 'Deep cleaning'),
+(37, '2026-08-22 14:00:00', 'COMPLETED', 'Room cleaned'),
+(38, '2026-08-23 13:00:00', 'IN_PROGRESS', 'Currently being cleaned'),
+(39, '2026-08-24 12:00:00', 'PENDING', 'Waiting for cleaner'),
+(40, '2026-08-25 11:00:00', 'COMPLETED', 'Room cleaned');
+
+-- ============================================
+-- INSERT ADDITIONAL CLEANERS (reach 100+)
+-- ============================================
+INSERT INTO cleaner (first_name, last_name, phone, active) VALUES
+('Evelyn', 'Hunt', '555-0191', 1), ('Nathan', 'Barnes', '555-0192', 1),
+('Chloe', 'Ross', '555-0193', 1), ('Logan', 'Henderson', '555-0194', 1),
+('Zoey', 'Coleman', '555-0195', 1), ('Mason', 'Jenkins', '555-0196', 1),
+('Lily', 'Perry', '555-0197', 1), ('Ethan', 'Powell', '555-0198', 1),
+('Hannah', 'Long', '555-0199', 1), ('Owen', 'Patterson', '555-0200', 1);
+
+-- ============================================
+-- INSERT ADDITIONAL EXTRA SERVICES (reach 100+)
+-- ============================================
+INSERT INTO extra_service (name, unit_price, price_unit, active) VALUES
+('New Year Package', 250.00, 'per night', 1),
+('Summer Package', 180.00, 'per night', 1),
+('Easter Package', 150.00, 'per package', 1),
+('Birthday Package', 200.00, 'per event', 1),
+('Graduation Package', 300.00, 'per event', 1),
+('Family Package', 400.00, 'per package', 1);
+
+-- ============================================
+-- INSERT ADDITIONAL SEASON RATES (reach 100+)
+-- ============================================
+INSERT INTO season_rate (room_type_id, season, price_per_night, valid_from, valid_to) VALUES
+(6, 'New Year', 185.00, '2026-12-28', '2027-01-02'),
+(6, 'Spring Break', 138.00, '2026-03-15', '2026-04-05'),
+(6, 'Summer Promo', 155.00, '2026-07-01', '2026-07-31'),
+(6, 'Conference Rate', 125.00, '2026-04-01', '2026-11-30'),
+(6, 'Winter Special', 112.00, '2026-01-01', '2026-02-28'),
+(6, 'Autumn Rate', 130.00, '2026-09-01', '2026-11-30'),
+(1, 'Holiday Extended', 105.00, '2026-12-20', '2027-01-05'),
+(2, 'Spring Extended', 138.00, '2026-03-01', '2026-03-31'),
+(3, 'Summer Start', 130.00, '2026-05-25', '2026-06-15'),
+(4, 'Autumn Peak', 255.00, '2026-10-01', '2026-11-15'),
+(5, 'Winter Holiday', 195.00, '2026-12-01', '2026-12-31'),
+(1, 'New Year Extended', 120.00, '2026-12-30', '2027-01-02'),
+(2, 'Chinese New Year', 165.00, '2026-02-07', '2026-02-14'),
+(3, 'St Patrick Day', 145.00, '2026-03-14', '2026-03-17'),
+(4, 'Pride Month', 245.00, '2026-06-01', '2026-06-30'),
+(5, 'Independence Week', 295.00, '2026-07-01', '2026-07-07'),
+(1, 'Tax Season', 85.00, '2026-04-01', '2026-04-30'),
+(2, 'Summer Finale', 140.00, '2026-08-20', '2026-09-05'),
+(3, 'Fall Foliage', 126.50, '2026-09-06', '2026-09-30'),
+(4, 'Pre-Christmas', 235.00, '2026-12-01', '2026-12-15'),
+(5, 'New Year Eve', 300.00, '2026-12-28', '2026-12-31'),
+(6, 'Summer Peak', 160.00, '2026-06-15', '2026-08-31'),
+(6, 'Holiday Season', 172.00, '2026-11-15', '2026-12-31'),
+(6, 'Business Rate', 100.00, '2026-01-01', '2026-12-31');
 
 SET FOREIGN_KEY_CHECKS = 1;
 

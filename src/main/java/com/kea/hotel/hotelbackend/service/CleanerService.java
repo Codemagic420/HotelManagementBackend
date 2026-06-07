@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.Cleaner;
 import com.kea.hotel.hotelbackend.repository.CleanerRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class CleanerService {
 
     public List<Cleaner> findAll() {
         return repo.findAll();
+    }
+
+    public Page<Cleaner> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<Cleaner> findAll(Boolean active, Pageable pageable) {
+        return active != null ? repo.findByActive(active, pageable) : repo.findAll(pageable);
     }
 
     public Optional<Cleaner> findById(Long id) {

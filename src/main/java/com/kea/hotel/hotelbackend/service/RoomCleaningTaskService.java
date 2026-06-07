@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.RoomCleaningTask;
 import com.kea.hotel.hotelbackend.repository.RoomCleaningTaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class RoomCleaningTaskService {
 
     public List<RoomCleaningTask> findAll() {
         return repo.findAll();
+    }
+
+    public Page<RoomCleaningTask> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<RoomCleaningTask> findAll(String taskStatus, Pageable pageable) {
+        return taskStatus != null ? repo.findByTaskStatus(taskStatus, pageable) : repo.findAll(pageable);
     }
 
     public Optional<RoomCleaningTask> findById(Long id) {

@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.SeasonRate;
 import com.kea.hotel.hotelbackend.repository.SeasonRateRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class SeasonRateService {
 
     public List<SeasonRate> findAll() {
         return repo.findAll();
+    }
+
+    public Page<SeasonRate> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<SeasonRate> findAll(String season, Pageable pageable) {
+        return season != null ? repo.findBySeason(season, pageable) : repo.findAll(pageable);
     }
 
     public Optional<SeasonRate> findById(Long id) {

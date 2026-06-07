@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.Guest;
 import com.kea.hotel.hotelbackend.repository.GuestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class GuestService {
 
     public List<Guest> findAll() {
         return repo.findAll();
+    }
+
+    public Page<Guest> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<Guest> findAll(String lastName, Pageable pageable) {
+        return lastName != null ? repo.findByLastNameContainingIgnoreCase(lastName, pageable) : repo.findAll(pageable);
     }
 
     public Optional<Guest> findById(Long id) {
