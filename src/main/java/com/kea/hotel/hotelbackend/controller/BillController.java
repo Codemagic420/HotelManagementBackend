@@ -9,6 +9,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -47,6 +48,16 @@ public class BillController {
     public ResponseEntity<Void> addItemToBill(@PathVariable Long billId, @RequestBody BillItem item) {
         billService.addItemToBill(billId, item);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}/close")
+    public ResponseEntity<Bill> closeBill(@PathVariable Long id) {
+        return billService.getBillById(id)
+                .map(bill -> {
+                    bill.setClosedAt(LocalDateTime.now());
+                    return ResponseEntity.ok(billService.save(bill));
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
