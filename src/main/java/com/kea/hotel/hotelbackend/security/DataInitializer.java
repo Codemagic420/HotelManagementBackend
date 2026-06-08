@@ -281,6 +281,10 @@ public class DataInitializer implements ApplicationRunner {
         List<SeasonRate> rates = seasonRateService.findAll();
         List<Room> rooms = roomService.findAll();
 
+        if (guests.isEmpty() || roomTypes.isEmpty() || rates.isEmpty() || rooms.isEmpty()) {
+            return;
+        }
+
         LocalDate baseDate = LocalDate.of(2026, 1, 1);
 
         for (int i = 0; i < 120; i++) {
@@ -393,6 +397,10 @@ public class DataInitializer implements ApplicationRunner {
     private void initializeRoomCleaningTasks() {
         List<Room> rooms = roomService.findAll();
         List<Cleaner> cleaners = cleanerService.findAll();
+
+        if (rooms.isEmpty() || cleaners.isEmpty()) {
+            return;
+        }
 
         int taskCount = 0;
         for (int i = 0; i < 120; i++) {

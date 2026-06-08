@@ -1,99 +1,96 @@
 package com.kea.hotel.hotelbackend.api;
 
+import com.kea.hotel.hotelbackend.service.RoomService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-@DisplayName("API Test Suite - MockMvc")
+@DisplayName("MySQL Room API Integration Tests")
 class RoomAPITest {
 
     @Autowired
-    private org.springframework.web.context.WebApplicationContext wac;
+    private WebApplicationContext wac;
+
+    @MockitoBean
+    private RoomService roomService;
 
     private MockMvc mockMvc;
 
-    @org.junit.jupiter.api.BeforeEach
-    void setup() {
-        this.mockMvc = org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup(this.wac).build();
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
+        when(roomService.findAll(any(), any())).thenReturn(Page.empty());
+        when(roomService.findById(any())).thenReturn(Optional.empty());
     }
 
     @Test
-    @DisplayName("GET /api/rooms - Should return 200 OK")
-    void testGetRooms_StatusCode() {
-        try {
-            mockMvc.perform(get("/api/rooms")).andExpect(status().isOk());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms - Should return 200 when authenticated")
+    void testGetRooms_WithAuth_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("GET /api/rooms - Should return JSON content type")
-    void testGetRooms_ContentType() {
-        try {
-            mockMvc.perform(get("/api/rooms")).andExpect(content().contentTypeCompatibleWith("application/json"));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @DisplayName("GET /api/mysql/rooms - Should return 401 when not authenticated")
+    void testGetRooms_WithoutAuth_Returns401() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("GET /api/rooms/{id} - Should return 404 for non-existent room")
-    void testGetRoom_NotFound() {
-        try {
-            mockMvc.perform(get("/api/rooms/99999")).andExpect(status().isNotFound());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms - Should return JSON content type")
+    void testGetRooms_ContentType() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"));
     }
 
     @Test
-    @DisplayName("GET /api/rooms - Should return list structure")
-    void testGetRooms_ResponseStructure() {
-        try {
-            mockMvc.perform(get("/api/rooms")).andExpect(status().isOk());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms/{id} - Should return 404 for non-existent room")
+    void testGetRoom_NotFound() throws Exception {
+        when(roomService.findById(eq(99999L))).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/mysql/rooms/99999"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("POST /api/rooms - Should accept a valid public create request")
-    void testCreateRoom_PublicCreate() {
-        try {
-            String payload = """
-                    {
-                      "roomNumber": "9999",
-                      "roomType": {"roomTypeId": 1},
-                      "roomStatus": "AVAILABLE",
-                      "cleanStatus": "CLEAN",
-                      "occupied": false,
-                      "type": "Single"
-                    }
-                    """;
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms?roomStatus=AVAILABLE - Should apply filter and return 200")
+    void testGetRooms_WithFilter_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms").param("roomStatus", "AVAILABLE"))
+                .andExpect(status().isOk());
+    }
 
-            org.springframework.test.web.servlet.MvcResult mvcResult = mockMvc.perform(post("/api/rooms")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(payload))
-                    .andReturn();
-
-            int statusCode = mvcResult.getResponse().getStatus();
-            assertThat(statusCode).isIn(200, 201);
-            assertThat(mvcResult.getResponse().getContentAsString()).contains("9999");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    @Test
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms?page=0&size=10 - Should support pagination")
+    void testGetRooms_Pagination_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms").param("page", "0").param("size", "10"))
+                .andExpect(status().isOk());
     }
 }

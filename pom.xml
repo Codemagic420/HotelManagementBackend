@@ -183,6 +183,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Boot WebMvc Test (@WebMvcTest) — Spring Boot 4 restructured artifact -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Spring Security Test (@WithMockUser) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Spring REST Docs for API documentation -->
         <dependency>
             <groupId>org.springframework.restdocs</groupId>

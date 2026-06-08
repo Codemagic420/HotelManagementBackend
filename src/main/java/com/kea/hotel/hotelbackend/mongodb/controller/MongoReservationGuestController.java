@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/mongo/reservation-guests")
+@RequestMapping("/api/mongodb/reservation-guests")
 @RequiredArgsConstructor
 public class MongoReservationGuestController {
     private final MongoReservationGuestService service;

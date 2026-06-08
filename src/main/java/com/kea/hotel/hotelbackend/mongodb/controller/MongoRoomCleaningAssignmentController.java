@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/mongo/room-cleaning-assignments")
+@RequestMapping("/api/mongodb/room-cleaning-assignments")
 @RequiredArgsConstructor
 public class MongoRoomCleaningAssignmentController {
     private final MongoRoomCleaningAssignmentService service;
