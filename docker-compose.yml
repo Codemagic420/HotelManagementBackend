@@ -140,6 +140,64 @@ services:
       timeout: 5s
       retries: 5
 
+  # ============================================
+  # Spring Boot Application
+  # Hotel Management Backend CRUD API
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotel_app_container
+    ports:
+      - "8080:8080"
+
+    # Environment variables for database connections
+    environment:
+      # MySQL configuration
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-hotel_db}
+      MYSQL_ROOT_USERNAME: ${MYSQL_ROOT_USERNAME:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+
+      # MongoDB configuration
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USER: ${MONGODB_USER:-admin}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-admin123}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-hotel_db}
+
+      # Neo4j configuration
+      NEO4J_HOST: neo4j
+      NEO4J_PORT: 7687
+      NEO4J_USERNAME: ${NEO4J_USERNAME:-neo4j}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-yourpassword}
+
+    # Network for inter-container communication
+    networks:
+      - hotel_network
+
+    # Wait for all databases to be healthy before starting
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+
+    # Health check - verifies app is responsive
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:8080/swagger-ui.html || exit 1
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+    # Restart policy
+    restart: unless-stopped
+
 # ============================================
 # VOLUMES - Persistent Data Storage
 # These are named volumes managed by Docker

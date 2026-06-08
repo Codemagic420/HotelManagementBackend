@@ -2,13 +2,14 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.RoomCleaningTask;
 import com.kea.hotel.hotelbackend.service.RoomCleaningTaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/room-cleaning-tasks")
+@RequestMapping("/api/mysql/room-cleaning-tasks")
 public class RoomCleaningTaskController {
 
     private final RoomCleaningTaskService service;
@@ -18,8 +19,10 @@ public class RoomCleaningTaskController {
     }
 
     @GetMapping
-    public List<RoomCleaningTask> getAllRoomCleaningTasks() {
-        return service.findAll();
+    public Page<RoomCleaningTask> getAllRoomCleaningTasks(
+            @RequestParam(required = false) String taskStatus,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(taskStatus, pageable);
     }
 
     @GetMapping("/{id}")

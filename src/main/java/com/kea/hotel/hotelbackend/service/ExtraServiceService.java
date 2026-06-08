@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.ExtraService;
 import com.kea.hotel.hotelbackend.repository.ExtraServiceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class ExtraServiceService {
 
     public List<ExtraService> findAll() {
         return repo.findAll();
+    }
+
+    public Page<ExtraService> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<ExtraService> findAll(Boolean active, Pageable pageable) {
+        return active != null ? repo.findByActive(active, pageable) : repo.findAll(pageable);
     }
 
     public Optional<ExtraService> findById(Long id) {

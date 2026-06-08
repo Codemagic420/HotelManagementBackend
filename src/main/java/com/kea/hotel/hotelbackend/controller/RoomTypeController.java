@@ -2,13 +2,14 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.RoomType;
 import com.kea.hotel.hotelbackend.service.RoomTypeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/room-types")
+@RequestMapping("/api/mysql/room-types")
 public class RoomTypeController {
 
     private final RoomTypeService service;
@@ -18,8 +19,8 @@ public class RoomTypeController {
     }
 
     @GetMapping
-    public List<RoomType> getAllRoomTypes() {
-        return service.findAll();
+    public Page<RoomType> getAllRoomTypes(@PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(pageable);
     }
 
     @GetMapping("/{id}")

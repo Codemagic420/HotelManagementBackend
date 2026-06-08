@@ -1,0 +1,203 @@
+name: CI/CD Pipeline - Hotel Management Backend V2
+
+on:
+  push:
+    branches: [ master, develop ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  # ========== TEST JOB ==========
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hotel_db
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 3307:3306
+      
+      mongodb:
+        image: mongo:6.0
+        env:
+          MONGO_INITDB_ROOT_USERNAME: admin
+          MONGO_INITDB_ROOT_PASSWORD: admin123
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 27017:27017
+      
+      neo4j:
+        image: neo4j:latest
+        env:
+          NEO4J_AUTH: neo4j/yourpassword
+          NEO4J_ACCEPT_LICENSE_AGREEMENT: "yes"
+        options: >-
+          --health-cmd="bash -c 'cat < /dev/null > /dev/tcp/localhost/7474' || exit 1"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports:
+          - 7687:7687
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Initialize MySQL Database Schema
+        run: |
+          sudo apt-get update && sudo apt-get install -y mysql-client
+          
+          echo "Waiting for MySQL network port to become completely available..."
+          until mysqladmin ping -h 127.0.0.1 -P 3307 -u root -proot --silent; do
+            echo "Database engine is booting up... pausing for 2 seconds"
+            sleep 2
+          done
+          echo "MySQL port verified! Executing target script list..."
+          
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/01_database_create.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/02_test_data.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/03_logic.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/04_users_privileges.sql
+          mysql -h 127.0.0.1 -P 3307 -u root -proot hotel_db < ./sql/05_audit.sql
+
+      - name: Run Unit & Integration Tests
+        run: ./mvnw clean test -DskipTests=false
+        env:
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3307
+          MYSQL_DATABASE: hotel_db
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MONGODB_USER: admin
+          MONGODB_PASSWORD: admin123
+          MONGODB_HOST: localhost
+          MONGODB_PORT: 27017
+          MONGODB_DATABASE: hotel_db
+          NEO4J_HOST: localhost
+          NEO4J_PORT: 7687
+
+      - name: Generate JaCoCo Coverage Report
+        run: ./mvnw jacoco:report
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4      
+        with:
+          files: ./target/site/jacoco/jacoco.xml
+          flags: unittests
+          name: codecov-coverage
+          fail_ci_if_error: false
+
+  # ========== BUILD JOB ==========
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: ./mvnw clean package -DskipTests
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4      
+        with:
+          name: hotel-backend-jar
+          path: target/hotelbackend-*.jar
+
+  # ========== STATIC ANALYSIS JOB ==========
+  sonarqube:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: SonarQube Scan
+        run: ./mvnw clean verify sonar:sonar
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
+  # ========== CODE QUALITY CHECK ==========
+  quality:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Run SpotBugs
+        run: ./mvnw spotbugs:check
+        continue-on-error: true
+
+      - name: Run Checkstyle
+        run: ./mvnw checkstyle:check
+        continue-on-error: true
+
+  # ========== DOCKER BUILD ==========
+  docker:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          tags: hotel-backend:latest
+          file: ./Dockerfile

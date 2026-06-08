@@ -2,13 +2,14 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.SeasonRate;
 import com.kea.hotel.hotelbackend.service.SeasonRateService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/season-rates")
+@RequestMapping("/api/mysql/season-rates")
 public class SeasonRateController {
 
     private final SeasonRateService service;
@@ -18,8 +19,10 @@ public class SeasonRateController {
     }
 
     @GetMapping
-    public List<SeasonRate> getAllSeasonRates() {
-        return service.findAll();
+    public Page<SeasonRate> getAllSeasonRates(
+            @RequestParam(required = false) String season,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(season, pageable);
     }
 
     @GetMapping("/{id}")

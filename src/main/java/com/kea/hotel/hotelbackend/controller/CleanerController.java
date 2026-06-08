@@ -2,13 +2,14 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.Cleaner;
 import com.kea.hotel.hotelbackend.service.CleanerService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/cleaners")
+@RequestMapping("/api/mysql/cleaners")
 public class CleanerController {
 
     private final CleanerService service;
@@ -18,8 +19,10 @@ public class CleanerController {
     }
 
     @GetMapping
-    public List<Cleaner> getAllCleaners() {
-        return service.findAll();
+    public Page<Cleaner> getAllCleaners(
+            @RequestParam(required = false) Boolean active,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(active, pageable);
     }
 
     @GetMapping("/{id}")
