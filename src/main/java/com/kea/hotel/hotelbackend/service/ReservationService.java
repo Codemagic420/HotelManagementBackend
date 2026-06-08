@@ -49,6 +49,20 @@ public class ReservationService {
         });
     }
 
+    public Optional<Reservation> checkIn(Long id) {
+        return repo.findById(id).map(r -> {
+            r.setStatus("CHECKED_IN");
+            return repo.save(r);
+        });
+    }
+
+    public Optional<Reservation> checkOut(Long id) {
+        return repo.findById(id).map(r -> {
+            r.setStatus("CHECKED_OUT");
+            return repo.save(r);
+        });
+    }
+
     public void delete(Long id) {
         repo.deleteById(id);
     }
