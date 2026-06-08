@@ -2,15 +2,16 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.service.RoomService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/api/mysql/rooms")
 public class RoomController {
 
     private final RoomService service;
@@ -20,8 +21,10 @@ public class RoomController {
     }
 
     @GetMapping
-    public List<Room> getAllRooms() {
-        return service.findAll();
+    public Page<Room> getAllRooms(
+            @RequestParam(required = false) String roomStatus,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(roomStatus, pageable);
     }
 
     @GetMapping("/{id}")

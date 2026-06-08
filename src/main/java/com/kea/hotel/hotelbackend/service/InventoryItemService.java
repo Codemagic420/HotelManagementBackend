@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.InventoryItem;
 import com.kea.hotel.hotelbackend.repository.InventoryItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class InventoryItemService {
 
     public List<InventoryItem> findAll() {
         return repo.findAll();
+    }
+
+    public Page<InventoryItem> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<InventoryItem> findAll(Boolean active, Pageable pageable) {
+        return active != null ? repo.findByActive(active, pageable) : repo.findAll(pageable);
     }
 
     public Optional<InventoryItem> findById(Long id) {

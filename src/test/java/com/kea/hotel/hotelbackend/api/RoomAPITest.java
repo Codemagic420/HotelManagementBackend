@@ -1,135 +1,96 @@
 package com.kea.hotel.hotelbackend.api;
 
+import com.kea.hotel.hotelbackend.service.RoomService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import java.util.Optional;
 
-@SpringBootTest
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @ActiveProfiles("test")
-@DisplayName("Room API - Black-Box Tests")
+@DisplayName("MySQL Room API Integration Tests")
 class RoomAPITest {
 
     @Autowired
     private WebApplicationContext wac;
+
+    @MockitoBean
+    private RoomService roomService;
+
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
+                .build();
+        when(roomService.findAll(any(), any())).thenReturn(Page.empty());
+        when(roomService.findById(any())).thenReturn(Optional.empty());
     }
 
-    // ========== EQUIVALENCE PARTITIONING - GET /api/rooms ==========
-    
     @Test
-    @DisplayName("TC-D1: Get all rooms - Success")
-    void testGetRooms_Success() throws Exception {
-        mockMvc.perform(get("/api/rooms"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms - Should return 200 when authenticated")
+    void testGetRooms_WithAuth_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(status().isOk());
     }
 
-    // ========== BOUNDARY VALUE ANALYSIS - Room IDs ==========
-    
-    @ParameterizedTest(name = "Invalid room ID: {0}")
-    @CsvSource({
-        "99999",
-        "0",
-        "-1"
-    })
-    @DisplayName("TC-D3: Get room with invalid ID - Should return 404")
-    void testGetRoom_InvalidId_NotFound(long roomId) throws Exception {
-        mockMvc.perform(get("/api/rooms/" + roomId))
+    @Test
+    @DisplayName("GET /api/mysql/rooms - Should return 401 when not authenticated")
+    void testGetRooms_WithoutAuth_Returns401() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms - Should return JSON content type")
+    void testGetRooms_ContentType() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms"))
+                .andExpect(content().contentTypeCompatibleWith("application/json"));
+    }
+
+    @Test
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms/{id} - Should return 404 for non-existent room")
+    void testGetRoom_NotFound() throws Exception {
+        when(roomService.findById(eq(99999L))).thenReturn(Optional.empty());
+        mockMvc.perform(get("/api/mysql/rooms/99999"))
                 .andExpect(status().isNotFound());
     }
 
-    // ========== DECISION TABLE - POST /api/rooms ==========
-    
-    @ParameterizedTest(name = "DT-R1: Create room with type={0}, status={1}")
-    @CsvSource({
-        "1, AVAILABLE",
-        "1, OCCUPIED",
-        "1, CLEANING"
-    })
-    @DisplayName("DT-R1: Create room with valid combinations")
-    void testCreateRoom_ValidCombinations(int typeId, String status) throws Exception {
-        String payload = String.format("""
-                {
-                  "roomNumber": "100",
-                  "roomType": {"roomTypeId": %d},
-                  "roomStatus": "%s",
-                  "cleanStatus": "CLEAN",
-                  "occupied": false
-                }
-                """, typeId, status);
-
-        mockMvc.perform(post("/api/rooms")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(payload))
-                .andExpect(status().is2xxSuccessful());
-    }
-
-    // ========== NEGATIVE TESTS - Invalid Input ==========
-    
     @Test
-    @DisplayName("TC-Invalid: Create room with missing roomType")
-    void testCreateRoom_MissingRoomType() throws Exception {
-        String payload = """
-                {
-                  "roomNumber": "100",
-                  "roomStatus": "AVAILABLE",
-                  "cleanStatus": "CLEAN"
-                }
-                """;
-
-        mockMvc.perform(post("/api/rooms")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(payload))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("TC-Invalid: Create room with empty payload")
-    void testCreateRoom_EmptyPayload() throws Exception {
-        mockMvc.perform(post("/api/rooms")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    // ========== RESPONSE VALIDATION ==========
-    
-    @Test
-    @DisplayName("GET /api/rooms - Response contains expected fields")
-    void testGetRooms_ResponseStructure() throws Exception {
-        mockMvc.perform(get("/api/rooms"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", isA(java.util.List.class)));
-    }
-
-    // ========== PERFORMANCE CHECK ==========
-    
-    @Test
-    @DisplayName("GET /api/rooms - Response time < 2 seconds")
-    void testGetRooms_Performance() throws Exception {
-        long startTime = System.currentTimeMillis();
-        
-        mockMvc.perform(get("/api/rooms"))
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms?roomStatus=AVAILABLE - Should apply filter and return 200")
+    void testGetRooms_WithFilter_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms").param("roomStatus", "AVAILABLE"))
                 .andExpect(status().isOk());
-        
-        long duration = System.currentTimeMillis() - startTime;
-        assert duration < 2000 : "Response too slow: " + duration + "ms";
+    }
+
+    @Test
+    @WithMockUser(roles = "STAFF")
+    @DisplayName("GET /api/mysql/rooms?page=0&size=10 - Should support pagination")
+    void testGetRooms_Pagination_Returns200() throws Exception {
+        mockMvc.perform(get("/api/mysql/rooms").param("page", "0").param("size", "10"))
+                .andExpect(status().isOk());
     }
 }

@@ -50,63 +50,54 @@ public class Neo4jDataInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         try {
-            System.out.println("🔄 Checking if Neo4j data exists...");
-            System.out.flush();
-            long cleanerCount = waitForNeo4jConnection();
-            System.out.println("   Found " + cleanerCount + " cleaners in Neo4j");
+            System.out.println("🔄 Checking Neo4j connection status...");
             System.out.flush();
 
+            long cleanerCount = waitForNeo4jConnection();
+
             if (cleanerCount == 0) {
-                System.out.println("🔄 Initializing Neo4j with graph data...");
-                System.out.flush();
-                initializeRoomTypes();
-                System.out.flush();
-                initializeRooms();
-                System.out.flush();
-                initializeCleaners();
-                System.out.flush();
-                initializeExtraServices();
-                System.out.flush();
-                initializeInventoryItems();
-                System.out.flush();
-                initializeSeasonRates();
-                System.out.flush();
-                initializeGuests();
-                System.out.flush();
-                initializeReservations();
-                System.out.flush();
-                printNeo4jStats();
+                System.out.println("ℹ️  Neo4j is empty - data must be initialized via migrator");
+                System.out.println("   → Run: POST http://localhost:8080/api/migrate");
+                System.out.println("   → Or: POST http://localhost:8080/api/neo4j/migrate");
             } else {
-                System.out.println("✓ Neo4j data already exists, skipping initialization");
+                System.out.println("✓ Neo4j is initialized with " + cleanerCount + " cleaners");
             }
+            System.out.flush();
         } catch (Exception e) {
-            System.err.println("⚠️  Neo4j initialization failed: " + (e.getMessage() != null ? e.getMessage() : "Unknown error"));
-            System.err.println("   Exception type: " + e.getClass().getSimpleName());
-            System.err.println("   Root cause: " + (e.getCause() != null ? e.getCause().getMessage() : "No root cause"));
-            System.err.println("   Use POST http://localhost:8080/api/migrate to initialize Neo4j data later");
-            System.err.println("   Or GET http://localhost:8080/api/neo4j/diagnostics/status to check Neo4j connection");
-            e.printStackTrace();
-            System.err.flush();
+            System.err.println("⚠️  Neo4j connection check failed");
+            System.err.println("   This is non-blocking - Neo4j will be initialized via migrator API");
+            System.err.println("   → Run: POST http://localhost:8080/api/migrate");
+            System.err.println("   → Status: GET http://localhost:8080/api/neo4j/diagnostics/status");
         }
     }
 
     private long waitForNeo4jConnection() throws Exception {
-        int maxRetries = 5;
-        int retryDelay = 2000; // 2 seconds
+        int maxRetries = 15;
+        int retryDelay = 3000; // 3 seconds
         Exception lastException = null;
 
         for (int i = 0; i < maxRetries; i++) {
             try {
-                return cleanerRepository.count();
+                long count = cleanerRepository.count();
+                System.out.println("✓ Neo4j connection successful");
+                return count;
+            } catch (NullPointerException e) {
+                lastException = e;
+                System.out.println("   ⏳ Neo4j initialization in progress... (attempt " + (i + 1) + "/" + maxRetries + ")");
+                if (i < maxRetries - 1) {
+                    Thread.sleep(retryDelay);
+                }
             } catch (Exception e) {
                 lastException = e;
+                System.out.println("   ⏳ Neo4j not ready yet, retrying... (attempt " + (i + 1) + "/" + maxRetries + ")");
+                System.out.println("      Error: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                 if (i < maxRetries - 1) {
-                    System.out.println("   ⏳ Neo4j not ready yet, retrying in " + (retryDelay / 1000) + "s... (attempt " + (i + 1) + "/" + maxRetries + ")");
                     Thread.sleep(retryDelay);
                 }
             }
         }
 
+        System.err.println("   ❌ Neo4j failed after " + maxRetries + " attempts (" + (maxRetries * retryDelay / 1000) + " seconds)");
         throw lastException;
     }
 

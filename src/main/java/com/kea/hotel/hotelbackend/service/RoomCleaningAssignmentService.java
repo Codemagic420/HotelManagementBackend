@@ -3,6 +3,8 @@ package com.kea.hotel.hotelbackend.service;
 import com.kea.hotel.hotelbackend.model.RoomCleaningAssignment;
 import com.kea.hotel.hotelbackend.model.RoomCleaningAssignmentKey;
 import com.kea.hotel.hotelbackend.repository.RoomCleaningAssignmentRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,10 @@ public class RoomCleaningAssignmentService {
 
     public List<RoomCleaningAssignment> findAll() {
         return repo.findAll();
+    }
+
+    public Page<RoomCleaningAssignment> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     public Optional<RoomCleaningAssignment> findById(RoomCleaningAssignmentKey id) {

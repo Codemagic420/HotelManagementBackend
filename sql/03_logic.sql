@@ -202,7 +202,70 @@ LEFT JOIN bill_item bi ON b.bill_id = bi.bill_id
 GROUP BY b.bill_id;
 
 -- ============================================
+-- INDEX: Performance Optimization for Queries
+-- ============================================
+CREATE INDEX IF NOT EXISTS idx_reservation_dates
+    ON reservation(check_in_date, check_out_date);
+
+CREATE INDEX IF NOT EXISTS idx_bill_reservation
+    ON bill(reservation_id);
+
+CREATE INDEX IF NOT EXISTS idx_guest_email_phone
+    ON guest(email, phone);
+
+-- ============================================
+-- EVENT SCHEDULER: Enable before creating events
+-- ============================================
+SET GLOBAL event_scheduler = ON;
+
+-- ============================================
+-- EVENT: ev_AutoCancelStaleReservations
+-- Purpose: Automatically cancel reservations that have
+--          been in PENDING status for more than 7 days
+--          without being confirmed. Runs every day at 02:00.
+-- Effect:  Sets status = 'CANCELLED' on stale PENDING rows,
+--          which also fires tr_RoomStatusUpdate to release
+--          the room back to AVAILABLE.
+-- ============================================
+DELIMITER //
+CREATE EVENT IF NOT EXISTS ev_AutoCancelStaleReservations
+ON SCHEDULE EVERY 1 DAY
+STARTS (CURRENT_DATE + INTERVAL 1 DAY + INTERVAL 2 HOUR)
+COMMENT 'Cancel PENDING reservations not confirmed within 7 days'
+DO
+BEGIN
+    UPDATE reservation
+    SET status = 'CANCELLED'
+    WHERE status = 'PENDING'
+      AND created_at < DATE_SUB(NOW(), INTERVAL 7 DAY);
+END //
+DELIMITER ;
+
+-- ============================================
+-- EVENT: ev_MonthlyCloseOldBills
+-- Purpose: Close bills that are still open 30 days after
+--          the reservation checked out. Runs on the 1st of
+--          each month at 03:00.
+-- Effect:  Sets closed_at on open bills where the linked
+--          reservation has status CHECKED_OUT and the bill
+--          is older than 30 days.
+-- ============================================
+DELIMITER //
+CREATE EVENT IF NOT EXISTS ev_MonthlyCloseOldBills
+ON SCHEDULE EVERY 1 MONTH
+STARTS (DATE_FORMAT(NOW() + INTERVAL 1 MONTH, '%Y-%m-01 03:00:00'))
+COMMENT 'Auto-close bills open more than 30 days after checkout'
+DO
+BEGIN
+    UPDATE bill b
+    JOIN reservation r ON b.reservation_id = r.reservation_id
+    SET b.closed_at = NOW()
+    WHERE b.closed_at IS NULL
+      AND r.status = 'CHECKED_OUT'
+      AND b.opened_at < DATE_SUB(NOW(), INTERVAL 30 DAY);
+END //
+DELIMITER ;
+
+-- ============================================
 -- End of Business Logic
 -- ============================================
--- NOTE: Indexes can be added separately after schema validation
--- This avoids SQL syntax issues in CI/CD environments

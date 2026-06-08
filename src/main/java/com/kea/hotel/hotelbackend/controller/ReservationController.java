@@ -6,13 +6,14 @@ import com.kea.hotel.hotelbackend.model.RoomType;
 import com.kea.hotel.hotelbackend.repository.GuestRepository;
 import com.kea.hotel.hotelbackend.repository.RoomTypeRepository;
 import com.kea.hotel.hotelbackend.service.ReservationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/api/mysql/reservations")
 public class ReservationController {
 
     private final ReservationService service;
@@ -26,8 +27,10 @@ public class ReservationController {
     }
 
     @GetMapping
-    public List<Reservation> getAllReservations() {
-        return service.findAll();
+    public Page<Reservation> getAllReservations(
+            @RequestParam(required = false) String status,
+            @PageableDefault(size = 20) Pageable pageable) {
+        return service.findAll(status, pageable);
     }
 
     @GetMapping("/{id}")

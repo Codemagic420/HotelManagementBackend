@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.RoomType;
 import com.kea.hotel.hotelbackend.repository.RoomTypeRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,10 @@ public class RoomTypeService {
 
     public List<RoomType> findAll() {
         return repo.findAll();
+    }
+
+    public Page<RoomType> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     public Optional<RoomType> findById(Long id) {

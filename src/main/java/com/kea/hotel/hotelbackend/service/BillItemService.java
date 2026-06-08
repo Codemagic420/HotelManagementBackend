@@ -2,6 +2,8 @@ package com.kea.hotel.hotelbackend.service;
 
 import com.kea.hotel.hotelbackend.model.BillItem;
 import com.kea.hotel.hotelbackend.repository.BillItemRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,14 @@ public class BillItemService {
 
     public List<BillItem> findAll() {
         return repo.findAll();
+    }
+
+    public Page<BillItem> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<BillItem> findAll(String itemType, Pageable pageable) {
+        return itemType != null ? repo.findByItemType(itemType, pageable) : repo.findAll(pageable);
     }
 
     public Optional<BillItem> findById(Long id) {

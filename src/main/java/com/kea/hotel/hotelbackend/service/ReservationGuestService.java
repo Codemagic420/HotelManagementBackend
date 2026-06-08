@@ -3,6 +3,8 @@ package com.kea.hotel.hotelbackend.service;
 import com.kea.hotel.hotelbackend.model.ReservationGuest;
 import com.kea.hotel.hotelbackend.model.ReservationGuestKey;
 import com.kea.hotel.hotelbackend.repository.ReservationGuestRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,10 @@ public class ReservationGuestService {
 
     public List<ReservationGuest> findAll() {
         return repo.findAll();
+    }
+
+    public Page<ReservationGuest> findAll(Pageable pageable) {
+        return repo.findAll(pageable);
     }
 
     public Optional<ReservationGuest> findById(ReservationGuestKey id) {

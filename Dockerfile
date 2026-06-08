@@ -1,16 +1,37 @@
-FROM eclipse-temurin:21-jdk AS build
-WORKDIR /app
+# Multi-stage build for Spring Boot 4.0.6 with Java 21
+FROM eclipse-temurin:21-jdk-alpine AS builder
 
-# copy pom and wrapper first for caching
-COPY pom.xml mvnw mvnw.cmd ./
+WORKDIR /build
+
+# Copy Maven wrapper and pom.xml
 COPY .mvn .mvn
-COPY src ./src
+COPY mvnw .
+COPY pom.xml .
 
-RUN chmod +x mvnw
-RUN ./mvnw -B -DskipTests package
+# Make mvnw executable and download dependencies
+RUN chmod +x mvnw && \
+    ./mvnw dependency:resolve -DincludeScope=runtime
 
-FROM eclipse-temurin:21-jre
+# Copy source code
+COPY src src
+
+# Build application
+RUN ./mvnw clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:21-jdk-alpine
+
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copy built jar from builder stage
+COPY --from=builder /build/target/hotelbackend-0.0.1-SNAPSHOT.jar app.jar
+
+# Expose port
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/swagger-ui.html || exit 1
+
+# Run application
+ENTRYPOINT ["java", "-jar", "app.jar"]
