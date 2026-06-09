@@ -32,7 +32,3 @@ build/
 ### VS Code ###
 .vscode/
 
-### Database dumps (binary files - generate locally with dumps/generate-dumps.sh) ###
-dumps/mongodb/
-dumps/neo4j/
-dumps/mysql/
