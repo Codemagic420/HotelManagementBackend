@@ -18,7 +18,7 @@ public class Neo4jRoomTypeService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jRoomType> findById(Long id) {
+    public Optional<Neo4jRoomType> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jRoomTypeService {
         return repository.save(roomType);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

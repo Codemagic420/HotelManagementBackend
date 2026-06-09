@@ -5,6 +5,7 @@ import com.kea.hotel.hotelbackend.neo4j.service.Neo4jReservationGuestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import java.util.List;
 
 @RestController

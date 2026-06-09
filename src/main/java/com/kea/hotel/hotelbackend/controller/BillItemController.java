@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.BillItem;
 import com.kea.hotel.hotelbackend.service.BillItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mysql/bill-items")
+@SecurityRequirement(name = "bearerAuth")
 public class BillItemController {
 
     private final BillItemService service;

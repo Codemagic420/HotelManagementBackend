@@ -16,7 +16,7 @@ import java.util.List;
 public class Neo4jGuest {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long guestId;
     private String firstName;
     private String lastName;

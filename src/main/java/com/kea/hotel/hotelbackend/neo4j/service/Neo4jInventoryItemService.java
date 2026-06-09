@@ -18,7 +18,7 @@ public class Neo4jInventoryItemService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jInventoryItem> findById(Long id) {
+    public Optional<Neo4jInventoryItem> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jInventoryItemService {
         return repository.save(item);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

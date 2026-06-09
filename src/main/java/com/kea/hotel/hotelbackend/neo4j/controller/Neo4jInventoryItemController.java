@@ -2,12 +2,14 @@ package com.kea.hotel.hotelbackend.neo4j.controller;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jInventoryItem;
 import com.kea.hotel.hotelbackend.neo4j.service.Neo4jInventoryItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/neo4j/inventory-items")
+@SecurityRequirement(name = "bearerAuth")
 public class Neo4jInventoryItemController {
     private final Neo4jInventoryItemService service;
 
@@ -21,7 +23,7 @@ public class Neo4jInventoryItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Neo4jInventoryItem> getById(@PathVariable Long id) {
+    public ResponseEntity<Neo4jInventoryItem> getById(@PathVariable String id) {
         return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -31,15 +33,15 @@ public class Neo4jInventoryItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Neo4jInventoryItem> update(@PathVariable Long id, @RequestBody Neo4jInventoryItem item) {
+    public ResponseEntity<Neo4jInventoryItem> update(@PathVariable String id, @RequestBody Neo4jInventoryItem item) {
         return service.findById(id).map(existing -> {
-            item.setInventoryItemId(id);
+            item.setElementId(existing.getElementId());
             return ResponseEntity.ok(service.save(item));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         if (service.findById(id).isPresent()) {
             service.delete(id);
             return ResponseEntity.ok().build();

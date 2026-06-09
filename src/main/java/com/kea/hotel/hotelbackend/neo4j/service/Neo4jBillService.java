@@ -18,7 +18,7 @@ public class Neo4jBillService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jBill> findById(Long id) {
+    public Optional<Neo4jBill> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jBillService {
         return repository.save(bill);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

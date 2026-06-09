@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class Neo4jExtraService {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long extraServiceId;
     private String name;
     private BigDecimal unitPrice;

@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.Room;
 import com.kea.hotel.hotelbackend.service.RoomService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/mysql/rooms")
+@SecurityRequirement(name = "bearerAuth")
 public class RoomController {
 
     private final RoomService service;

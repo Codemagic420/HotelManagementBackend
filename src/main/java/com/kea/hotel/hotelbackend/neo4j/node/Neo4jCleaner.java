@@ -16,7 +16,7 @@ import java.util.List;
 public class Neo4jCleaner {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long cleanerId;
     private String firstName;
     private String lastName;

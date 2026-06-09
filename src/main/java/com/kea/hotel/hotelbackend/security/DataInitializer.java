@@ -114,9 +114,6 @@ public class DataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        verifyAuthInfrastructure();
-        initializeUsers();
-
         if (cleanerService.findAll().isEmpty()) {
             System.out.println("🔄 Initializing 100+ records for each entity...");
             initializeCleaners();
@@ -134,49 +131,6 @@ public class DataInitializer implements ApplicationRunner {
         }
     }
 
-    private void verifyAuthInfrastructure() {
-        try {
-            long userCount = userRepository.count();
-            System.out.println("✓ Authentication repository available (" + userCount + " users found)");
-        } catch (Exception ex) {
-            throw new IllegalStateException(
-                    "Authentication startup check failed: unable to access the user_account table. " +
-                            "Check the MySQL schema and connection before starting the app.",
-                    ex
-            );
-        }
-    }
-
-    private void initializeUsers() {
-        String adminPassword = System.getenv("MYSQL_ADMIN_PASSWORD") != null ?
-            System.getenv("MYSQL_ADMIN_PASSWORD") : "admin123";
-        String staffPassword = System.getenv("MYSQL_STAFF_PASSWORD") != null ?
-            System.getenv("MYSQL_STAFF_PASSWORD") : "staff123";
-        String cleanerPassword = System.getenv("CLEANER_PASSWORD") != null ?
-            System.getenv("CLEANER_PASSWORD") : "cleaner123";
-
-        ensureUserExists("admin", adminPassword, Role.ADMIN);
-        ensureUserExists("staff", staffPassword, Role.STAFF);
-
-        for (int i = 1; i <= 20; i++) {
-            String username = "cleaner" + i;
-            ensureUserExists(username, cleanerPassword, Role.CLEANER);
-        }
-
-        System.out.println("✓ Default auth users are present (admin, staff, cleaner1-20)");
-    }
-
-    private void ensureUserExists(String username, String password, Role role) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            return;
-        }
-
-        UserAccount userAccount = new UserAccount();
-        userAccount.setUsername(username);
-        userAccount.setPasswordHash(passwordEncoder.encode(password));
-        userAccount.setRole(role);
-        userRepository.save(userAccount);
-    }
 
     private void initializeCleaners() {
         for (int i = 0; i < 120; i++) {

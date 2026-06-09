@@ -18,7 +18,7 @@ public class Neo4jGuestService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jGuest> findById(Long id) {
+    public Optional<Neo4jGuest> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jGuestService {
         return repository.save(guest);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

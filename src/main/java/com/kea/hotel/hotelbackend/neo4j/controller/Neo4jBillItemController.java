@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.neo4j.controller;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jBillItem;
 import com.kea.hotel.hotelbackend.neo4j.service.Neo4jBillItemService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/neo4j/bill-items")
+@SecurityRequirement(name = "bearerAuth")
 public class Neo4jBillItemController {
     private final Neo4jBillItemService service;
 
@@ -23,7 +25,7 @@ public class Neo4jBillItemController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Neo4jBillItem> getById(@PathVariable Long id) {
+    public ResponseEntity<Neo4jBillItem> getById(@PathVariable String id) {
         return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -33,15 +35,15 @@ public class Neo4jBillItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Neo4jBillItem> update(@PathVariable Long id, @RequestBody Neo4jBillItem item) {
+    public ResponseEntity<Neo4jBillItem> update(@PathVariable String id, @RequestBody Neo4jBillItem item) {
         return service.findById(id).map(existing -> {
-            item.setId(existing.getId());
+            item.setElementId(existing.getElementId());
             return ResponseEntity.ok(service.save(item));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         if (service.findById(id).isPresent()) {
             service.delete(id);
             return ResponseEntity.ok().build();

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Neo4jBillItem {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long billItemId;
     private String itemType;
     private String description;

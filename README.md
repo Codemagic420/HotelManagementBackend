@@ -96,13 +96,13 @@ http://localhost:8080/swagger-ui.html
 
 ## Default Users
 
-Created automatically on startup. Existing users are not overwritten.
+Created from `sql/02_test_data.sql` during database initialization. Passwords are BCrypt-hashed (strength 10).
 
 | Username | Password | Role |
 |----------|----------|------|
 | admin | admin123 | ADMIN |
 | staff | staff123 | STAFF |
-| cleaner1–20 | cleaner123 | CLEANER |
+| cleaner1–5 | cleaner123 | CLEANER |
 
 ---
 

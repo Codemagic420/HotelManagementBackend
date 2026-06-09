@@ -2,12 +2,14 @@ package com.kea.hotel.hotelbackend.neo4j.controller;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jRoomCleaningTask;
 import com.kea.hotel.hotelbackend.neo4j.service.Neo4jRoomCleaningTaskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/neo4j/room-cleaning-tasks")
+@SecurityRequirement(name = "bearerAuth")
 public class Neo4jRoomCleaningTaskController {
     private final Neo4jRoomCleaningTaskService service;
 
@@ -21,7 +23,7 @@ public class Neo4jRoomCleaningTaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Neo4jRoomCleaningTask> getById(@PathVariable Long id) {
+    public ResponseEntity<Neo4jRoomCleaningTask> getById(@PathVariable String id) {
         return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -31,15 +33,15 @@ public class Neo4jRoomCleaningTaskController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Neo4jRoomCleaningTask> update(@PathVariable Long id, @RequestBody Neo4jRoomCleaningTask task) {
+    public ResponseEntity<Neo4jRoomCleaningTask> update(@PathVariable String id, @RequestBody Neo4jRoomCleaningTask task) {
         return service.findById(id).map(existing -> {
-            task.setTaskId(id);
+            task.setElementId(existing.getElementId());
             return ResponseEntity.ok(service.save(task));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         if (service.findById(id).isPresent()) {
             service.delete(id);
             return ResponseEntity.ok().build();

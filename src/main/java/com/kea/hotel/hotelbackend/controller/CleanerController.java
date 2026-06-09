@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.Cleaner;
 import com.kea.hotel.hotelbackend.service.CleanerService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mysql/cleaners")
+@SecurityRequirement(name = "bearerAuth")
 public class CleanerController {
 
     private final CleanerService service;
