@@ -148,6 +148,7 @@ class BillServiceTest {
                 .add(item3.getLineTotal());
 
         assertThat(total).isEqualByComparingTo(new BigDecimal("375.00"));
+        
     }
 
     @Test
