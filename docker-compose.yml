@@ -110,8 +110,7 @@ services:
 
     # Authentication and plugins
     environment:
-      # neo4j/yourpassword - Change 'yourpassword' in production!
-      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/yourpassword}
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/secure_neo4j_password_dev}
       # APOC plugin for extended graph functions
       NEO4J_PLUGINS: '["apoc"]'
 
@@ -139,6 +138,62 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  # ============================================
+  # Spring Boot Backend - Hotel Management API
+  # ============================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hotel_backend_container
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      # Docker-internal overrides — these win over .env values
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      NEO4J_URI: bolt://neo4j:7687
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      LLM_BASE_URL: http://llm:8000
+    depends_on:
+      mysql:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    networks:
+      - hotel_network
+    restart: unless-stopped
+
+  # ============================================
+  # LLM Assistant - FastAPI / Ollama RAG service
+  # Requires Ollama running on the host machine
+  # with models: llama3.2:3b (guest) and mistral:7b (staff)
+  # Run ingest.py once to populate chroma_db before starting
+  # ============================================
+  llm:
+    build:
+      context: ../../hotellmm/Hotel-LLM-Assistant
+      dockerfile: Dockerfile
+    container_name: hotel_llm_container
+    ports:
+      - "8000:8000"
+    environment:
+      STAFF_API_BASE_URL: http://backend:8080
+      OLLAMA_BASE_URL: http://host.docker.internal:11434
+    volumes:
+      - ../../hotellmm/Hotel-LLM-Assistant/chroma_db:/app/chroma_db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backend
+    networks:
+      - hotel_network
+    restart: unless-stopped
 
 # ============================================
 # VOLUMES - Persistent Data Storage
