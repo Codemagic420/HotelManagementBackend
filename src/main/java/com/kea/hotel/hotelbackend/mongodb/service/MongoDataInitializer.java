@@ -222,6 +222,7 @@ public class MongoDataInitializer implements ApplicationRunner {
 
                 bill.getItems().add(billItem);
                 reservation.getBills().add(bill);
+                guest.getReservations().add(reservation);
             }
 
             mongoGuestRepository.save(guest);
