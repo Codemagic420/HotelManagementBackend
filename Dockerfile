@@ -16,7 +16,7 @@ RUN chmod +x mvnw && \
 COPY src src
 
 # Build application
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Runtime stage
 FROM eclipse-temurin:21-jdk-alpine

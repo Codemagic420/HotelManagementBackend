@@ -18,7 +18,7 @@ public class Neo4jExtraServiceService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jExtraService> findById(Long id) {
+    public Optional<Neo4jExtraService> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jExtraServiceService {
         return repository.save(service);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

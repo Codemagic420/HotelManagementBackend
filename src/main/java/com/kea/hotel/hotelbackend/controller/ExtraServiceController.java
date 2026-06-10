@@ -2,6 +2,7 @@ package com.kea.hotel.hotelbackend.controller;
 
 import com.kea.hotel.hotelbackend.model.ExtraService;
 import com.kea.hotel.hotelbackend.service.ExtraServiceService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/mysql/extra-services")
+@SecurityRequirement(name = "bearerAuth")
 public class ExtraServiceController {
 
     private final ExtraServiceService service;

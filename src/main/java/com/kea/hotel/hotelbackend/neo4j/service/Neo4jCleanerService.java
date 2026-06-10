@@ -18,7 +18,7 @@ public class Neo4jCleanerService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jCleaner> findById(Long id) {
+    public Optional<Neo4jCleaner> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jCleanerService {
         return repository.save(cleaner);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

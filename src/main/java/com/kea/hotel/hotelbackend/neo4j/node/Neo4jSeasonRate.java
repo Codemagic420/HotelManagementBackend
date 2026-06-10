@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class Neo4jSeasonRate {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long rateId;
     private String roomType;
     private String season;

@@ -2,12 +2,14 @@ package com.kea.hotel.hotelbackend.neo4j.controller;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jBill;
 import com.kea.hotel.hotelbackend.neo4j.service.Neo4jBillService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/neo4j/bills")
+@SecurityRequirement(name = "bearerAuth")
 public class Neo4jBillController {
     private final Neo4jBillService service;
 
@@ -21,7 +23,7 @@ public class Neo4jBillController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Neo4jBill> getById(@PathVariable Long id) {
+    public ResponseEntity<Neo4jBill> getById(@PathVariable String id) {
         return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -31,15 +33,15 @@ public class Neo4jBillController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Neo4jBill> update(@PathVariable Long id, @RequestBody Neo4jBill bill) {
+    public ResponseEntity<Neo4jBill> update(@PathVariable String id, @RequestBody Neo4jBill bill) {
         return service.findById(id).map(existing -> {
-            bill.setBillId(id);
+            bill.setElementId(existing.getElementId());
             return ResponseEntity.ok(service.save(bill));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         if (service.findById(id).isPresent()) {
             service.delete(id);
             return ResponseEntity.ok().build();

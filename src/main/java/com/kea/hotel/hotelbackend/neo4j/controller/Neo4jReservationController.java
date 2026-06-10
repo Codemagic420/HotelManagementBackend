@@ -2,12 +2,14 @@ package com.kea.hotel.hotelbackend.neo4j.controller;
 
 import com.kea.hotel.hotelbackend.neo4j.node.Neo4jReservation;
 import com.kea.hotel.hotelbackend.neo4j.service.Neo4jReservationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/neo4j/reservations")
+@SecurityRequirement(name = "bearerAuth")
 public class Neo4jReservationController {
     private final Neo4jReservationService service;
 
@@ -21,7 +23,7 @@ public class Neo4jReservationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Neo4jReservation> getById(@PathVariable Long id) {
+    public ResponseEntity<Neo4jReservation> getById(@PathVariable String id) {
         return service.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
@@ -31,7 +33,7 @@ public class Neo4jReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable String id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -6,6 +6,7 @@ import com.kea.hotel.hotelbackend.model.RoomType;
 import com.kea.hotel.hotelbackend.repository.GuestRepository;
 import com.kea.hotel.hotelbackend.repository.RoomTypeRepository;
 import com.kea.hotel.hotelbackend.service.ReservationService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/mysql/reservations")
 public class ReservationController {
 

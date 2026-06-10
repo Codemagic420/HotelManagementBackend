@@ -19,7 +19,7 @@ import java.util.List;
 public class Neo4jReservation {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long reservationId;
     private String referenceNo;
     private LocalDate checkInDate;

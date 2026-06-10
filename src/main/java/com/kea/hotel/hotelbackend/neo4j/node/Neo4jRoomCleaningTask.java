@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Neo4jRoomCleaningTask {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long taskId;
     private LocalDateTime createdAt;
     private String taskStatus;

@@ -9,11 +9,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- INSERT USERS
 -- ============================================
 INSERT INTO user_account (username, password_hash, role) VALUES
-('cleaner1', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner2', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner3', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner4', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER'),
-('cleaner5', '$2a$10$slYQmyNdGzin7olVN3/p2OPST9/PgBkqquzi.Ee9O6oLxV9tIUHm2', 'CLEANER')
+('admin', '$2b$10$fTKL9WZz6CzEUeRncs6fheHll4JIlCdmdwVguPPDthMYP5fl1xyl.', 'ADMIN'),
+('staff', '$2b$10$Nyt5VTyDpcnHprjZX0Q0uOSf9D4GSiPVRZHPTF8FGxUktHTsBkpo.', 'STAFF'),
+('cleaner1', '$2b$10$moNLBBQoeKpqn9btfQkM8eP/q14mgR/Da96Z0EsFS687f5moPH32G', 'CLEANER'),
+('cleaner2', '$2b$10$moNLBBQoeKpqn9btfQkM8eP/q14mgR/Da96Z0EsFS687f5moPH32G', 'CLEANER'),
+('cleaner3', '$2b$10$moNLBBQoeKpqn9btfQkM8eP/q14mgR/Da96Z0EsFS687f5moPH32G', 'CLEANER'),
+('cleaner4', '$2b$10$moNLBBQoeKpqn9btfQkM8eP/q14mgR/Da96Z0EsFS687f5moPH32G', 'CLEANER'),
+('cleaner5', '$2b$10$moNLBBQoeKpqn9btfQkM8eP/q14mgR/Da96Z0EsFS687f5moPH32G', 'CLEANER')
 ON DUPLICATE KEY UPDATE username=VALUES(username);
 
 -- ============================================

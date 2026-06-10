@@ -20,7 +20,7 @@ public class Neo4jBillItemService {
         return repository.findAll(pageable);
     }
 
-    public Optional<Neo4jBillItem> findById(Long id) {
+    public Optional<Neo4jBillItem> findById(String id) {
         return repository.findById(id);
     }
 
@@ -28,7 +28,7 @@ public class Neo4jBillItemService {
         return repository.save(item);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

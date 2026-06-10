@@ -18,7 +18,7 @@ public class Neo4jReservationService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jReservation> findById(Long id) {
+    public Optional<Neo4jReservation> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jReservationService {
         return repository.save(reservation);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

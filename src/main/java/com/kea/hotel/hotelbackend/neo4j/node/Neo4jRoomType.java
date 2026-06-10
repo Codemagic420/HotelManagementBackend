@@ -12,7 +12,7 @@ import org.springframework.data.neo4j.core.schema.Node;
 public class Neo4jRoomType {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long roomTypeId;
     private String name;
     private Integer maxOccupancy;

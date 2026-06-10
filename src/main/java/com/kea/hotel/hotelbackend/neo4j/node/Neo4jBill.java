@@ -18,7 +18,7 @@ import java.util.List;
 public class Neo4jBill {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long billId;
     private Long reservationId;
     private LocalDateTime openedAt;

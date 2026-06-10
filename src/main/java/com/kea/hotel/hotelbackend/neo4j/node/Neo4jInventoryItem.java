@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class Neo4jInventoryItem {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long inventoryItemId;
     private String name;
     private BigDecimal unitPrice;

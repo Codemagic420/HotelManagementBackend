@@ -18,7 +18,7 @@ public class Neo4jRoomCleaningTaskService {
         return repository.findAll();
     }
 
-    public Optional<Neo4jRoomCleaningTask> findById(Long id) {
+    public Optional<Neo4jRoomCleaningTask> findById(String id) {
         return repository.findById(id);
     }
 
@@ -26,7 +26,7 @@ public class Neo4jRoomCleaningTaskService {
         return repository.save(task);
     }
 
-    public void delete(Long id) {
+    public void delete(String id) {
         repository.deleteById(id);
     }
 }

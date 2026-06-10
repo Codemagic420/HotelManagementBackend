@@ -16,7 +16,7 @@ import java.util.List;
 public class Neo4jRoom {
     @Id
     @GeneratedValue
-    private Long id;
+    private String elementId;
     private Long roomId;
     private String roomNumber;
     private String roomStatus;
