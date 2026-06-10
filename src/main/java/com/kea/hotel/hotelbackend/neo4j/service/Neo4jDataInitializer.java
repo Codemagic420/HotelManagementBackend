@@ -185,8 +185,8 @@ public class Neo4jDataInitializer implements ApplicationRunner {
                 rate.setRoomType(roomType.getName());
                 rate.setSeason(seasons[s % seasons.length]);
                 rate.setPricePerNight(new BigDecimal(50 + (s * 20) + (roomType.getMaxOccupancy() * 50)));
-                rate.setValidFrom(LocalDate.of(2026, (s % 12) + 1, 1));
-                rate.setValidTo(LocalDate.of(2026, ((s + 2) % 12) + 1, 28));
+                rate.setValidFrom(LocalDate.of(2026, (s % 12) + 1, 1).toString());
+                rate.setValidTo(LocalDate.of(2026, ((s + 2) % 12) + 1, 28).toString());
                 seasonRateRepository.save(rate);
                 count++;
             }
@@ -227,7 +227,7 @@ public class Neo4jDataInitializer implements ApplicationRunner {
             res.setNumGuests((i % 5) + 1);
             res.setBookedNightlyPrice(new BigDecimal(100 + (i % 200)));
             res.setStatus(new String[]{"CONFIRMED", "CHECKED_OUT"}[i % 2]);
-            res.setCreatedAt(LocalDateTime.now().minusDays(30 - (i % 30)));
+            res.setCreatedAt(LocalDateTime.now().minusDays(30 - (i % 30)).toString());
 
             res.setGuest(guests.get(i % guests.size()));
             res.setRoom(rooms.get(i % rooms.size()));

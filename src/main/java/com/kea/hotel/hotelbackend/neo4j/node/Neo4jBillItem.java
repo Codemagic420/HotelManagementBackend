@@ -7,7 +7,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Node("BillItem")
 @Data
@@ -22,5 +21,5 @@ public class Neo4jBillItem {
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal lineTotal;
-    private LocalDateTime postedAt;
+    private String postedAt;
 }

@@ -8,7 +8,6 @@ import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,8 @@ public class Neo4jBill {
     private String elementId;
     private Long billId;
     private Long reservationId;
-    private LocalDateTime openedAt;
-    private LocalDateTime closedAt;
+    private String openedAt;
+    private String closedAt;
     private BigDecimal totalAmount;
 
     @Relationship(type = "CONTAINS_ITEM", direction = Relationship.Direction.OUTGOING)

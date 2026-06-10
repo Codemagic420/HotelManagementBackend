@@ -7,7 +7,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Node("SeasonRate")
 @Data
@@ -20,6 +19,6 @@ public class Neo4jSeasonRate {
     private String roomType;
     private String season;
     private BigDecimal pricePerNight;
-    private LocalDate validFrom;
-    private LocalDate validTo;
+    private String validFrom;
+    private String validTo;
 }

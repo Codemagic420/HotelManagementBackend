@@ -77,6 +77,12 @@ public class DataMigrator {
         return "Migration completed successfully.";
     }
 
+    @PostMapping("/neo4j")
+    public String migrateNeo4jOnly() {
+        migrateToNeo4j();
+        return "Neo4j migration completed.";
+    }
+
     private boolean isMigrationAlreadyDone() {
         try {
             long mongoReservationCount = mongoTemplate.count(new Query(), "reservations");

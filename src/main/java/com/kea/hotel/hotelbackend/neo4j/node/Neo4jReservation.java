@@ -9,7 +9,6 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class Neo4jReservation {
     private Integer numGuests;
     private BigDecimal bookedNightlyPrice;
     private String status;
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @Relationship(type = "BOOKED_BY", direction = Relationship.Direction.INCOMING)
     private Neo4jGuest guest;

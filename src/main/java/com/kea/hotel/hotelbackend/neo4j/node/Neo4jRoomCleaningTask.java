@@ -7,8 +7,6 @@ import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
-import java.time.LocalDateTime;
-
 @Node("RoomCleaningTask")
 @Data
 @NoArgsConstructor
@@ -17,7 +15,7 @@ public class Neo4jRoomCleaningTask {
     @GeneratedValue
     private String elementId;
     private Long taskId;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private String taskStatus;
     private String note;
 
