@@ -44,7 +44,7 @@ public class GuestService {
             return repo.save(existing);
         });
     }
-
+    
     @Transactional
     public void delete(Long id) {
         // clear guest reference on reservations to avoid FK constraint when deleting
