@@ -90,8 +90,8 @@ public class E2EApiPlaywrightTest {
             RequestOptions.create().setData(new java.util.HashMap<String, Object>() {{
                 put("guestId", 1);
                 put("roomId", 1);
-                put("checkInDate", "2026-06-15");
-                put("checkOutDate", "2026-06-20");
+                put("checkInDate", java.time.LocalDate.now().plusDays(30).toString());
+                put("checkOutDate", java.time.LocalDate.now().plusDays(35).toString());
                 put("numberOfGuests", 2);
                 put("specialRequests", "Early check-in requested");
             }})

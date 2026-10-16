@@ -14,6 +14,13 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * CRUD tests for InventoryItemRepository (towels, soap, etc.).
+ * TYPE: integration test (real repository + in-memory H2 DB, no mocks).
+ * HOW: @SpringBootTest loads the app; @Transactional rolls back after every test, so created rows never leak.
+ * Seed data (cleaners, rooms, ...) comes from DataInitializer, which runs at startup.
+ * BREAK IT: change an expected value, or seed an item with a negative price (TC-II6 fails).
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -22,6 +29,8 @@ class InventoryItemRepositoryTest {
     @Autowired
     private InventoryItemRepository inventoryItemRepository;
 
+    // Checks: seeded inventory items exist.
+    // Fails if: table is empty.
     @Test
     @DisplayName("TC-II1: Find all inventory items")
     void testFindAll() {
@@ -29,6 +38,8 @@ class InventoryItemRepositoryTest {
         assertThat(items).isNotNull().isNotEmpty();
     }
 
+    // Checks: CREATE - saved item gets an ID and keeps its name.
+    // Fails if: expected name differs, or save() throws.
     @Test
     @DisplayName("TC-II2: Save new inventory item")
     void testSaveNewItem() {
@@ -44,6 +55,8 @@ class InventoryItemRepositoryTest {
         assertThat(saved.getName()).isEqualTo("Unique Item");
     }
 
+    // Checks: READ by ID.
+    // Note: returns early (passes silently) if the table is empty.
     @Test
     @DisplayName("TC-II3: Find item by ID")
     void testFindById() {
@@ -57,6 +70,8 @@ class InventoryItemRepositoryTest {
         assertThat(found.get().getInventoryItemId()).isEqualTo(itemId);
     }
 
+    // Checks: UPDATE - unit price changes from 100.00 to 120.00.
+    // Fails if: expected price is changed.
     @Test
     @DisplayName("TC-II4: Update inventory item")
     void testUpdateItem() {
@@ -72,6 +87,8 @@ class InventoryItemRepositoryTest {
         assertThat(updated.getUnitPrice()).isEqualByComparingTo(new BigDecimal("120.00"));
     }
 
+    // Checks: DELETE - item is gone after deleteById.
+    // Fails if: the deleteById line is removed.
     @Test
     @DisplayName("TC-II5: Delete inventory item")
     void testDeleteItem() {
@@ -88,6 +105,8 @@ class InventoryItemRepositoryTest {
         assertThat(deleted).isEmpty();
     }
 
+    // Checks: every item has price >= 0 (zero allowed) and a non-blank name.
+    // Fails if: a seeded item has a negative price or blank name.
     @Test
     @DisplayName("TC-II6: Inventory item has valid price")
     void testValidPrice() {

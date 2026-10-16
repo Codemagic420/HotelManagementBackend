@@ -17,6 +17,14 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * CRUD tests for SeasonRateRepository (price per night per room type and season).
+ * TYPE: integration test (real repository + in-memory H2 DB, no mocks).
+ * HOW: @SpringBootTest loads the app; @Transactional rolls back after every test, so created rows never leak.
+ * Seed data (cleaners, rooms, ...) comes from DataInitializer, which runs at startup.
+ * @BeforeEach creates a RoomType first, because every SeasonRate needs a room type (foreign key).
+ * BREAK IT: change an expected value, or set validFrom after validTo (TC-SR6 fails).
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -30,6 +38,7 @@ class SeasonRateRepositoryTest {
 
     private RoomType testRoomType;
 
+    // Arrange: create a fresh RoomType that each test attaches its SeasonRate to.
     @BeforeEach
     void setUp() {
         testRoomType = new RoomType();
@@ -38,6 +47,8 @@ class SeasonRateRepositoryTest {
         testRoomType = roomTypeRepository.save(testRoomType);
     }
 
+    // Checks: findAll() works and returns a list (not null).
+    // WEAK: an empty list also passes, so this almost cannot fail.
     @Test
     @DisplayName("TC-SR1: Find all season rates")
     void testFindAll() {
@@ -45,6 +56,8 @@ class SeasonRateRepositoryTest {
         assertThat(rates).isNotNull();
     }
 
+    // Checks: CREATE - saved rate gets an ID, season and price.
+    // Fails if: expected season/price differ, or save() throws.
     @Test
     @DisplayName("TC-SR2: Save new season rate")
     void testSaveNewRate() {
@@ -63,6 +76,8 @@ class SeasonRateRepositoryTest {
         assertThat(saved.getPricePerNight()).isEqualByComparingTo(new BigDecimal("250.00"));
     }
 
+    // Checks: READ - save a rate, then find it by its ID.
+    // Fails if: expected season ('LOW') differs from the saved one.
     @Test
     @DisplayName("TC-SR3: Find rate by ID")
     void testFindById() {
@@ -80,6 +95,8 @@ class SeasonRateRepositoryTest {
         assertThat(found.get().getSeason()).isEqualTo("LOW");
     }
 
+    // Checks: UPDATE - price changes from 300.00 to 350.00.
+    // Fails if: expected price is changed.
     @Test
     @DisplayName("TC-SR4: Update season rate")
     void testUpdateRate() {
@@ -97,6 +114,8 @@ class SeasonRateRepositoryTest {
         assertThat(updated.getPricePerNight()).isEqualByComparingTo(new BigDecimal("350.00"));
     }
 
+    // Checks: DELETE - rate is gone after deleteById.
+    // Fails if: the deleteById line is removed.
     @Test
     @DisplayName("TC-SR5: Delete season rate")
     void testDeleteRate() {
@@ -115,6 +134,9 @@ class SeasonRateRepositoryTest {
         assertThat(deleted).isEmpty();
     }
 
+    // Checks: business rule - price > 0 and validFrom is before validTo.
+    // Fails if: price is 0/negative, or the dates are swapped.
+    // Note: asserts on the object the test built itself, so it checks the test data, not a DB rule.
     @Test
     @DisplayName("TC-SR6: Season rate has valid price")
     void testValidPrice() {

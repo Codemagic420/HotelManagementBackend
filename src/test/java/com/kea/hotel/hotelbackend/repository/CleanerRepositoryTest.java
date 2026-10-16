@@ -13,6 +13,13 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * CRUD tests for CleanerRepository.
+ * TYPE: integration test (real repository + in-memory H2 DB, no mocks).
+ * HOW: @SpringBootTest loads the app; @Transactional rolls back after every test, so created rows never leak.
+ * Seed data (cleaners, rooms, ...) comes from DataInitializer, which runs at startup.
+ * BREAK IT: change an expected value (e.g. 'John'), or stop DataInitializer seeding cleaners (TC-C1/C6 fail).
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -21,6 +28,8 @@ class CleanerRepositoryTest {
     @Autowired
     private CleanerRepository cleanerRepository;
 
+    // Checks: seeded cleaners exist (list not empty).
+    // Fails if: DB has no cleaners (seed data removed).
     @Test
     @DisplayName("TC-C1: Find all cleaners")
     void testFindAll() {
@@ -28,6 +37,8 @@ class CleanerRepositoryTest {
         assertThat(cleaners).isNotNull().isNotEmpty();
     }
 
+    // Checks: CREATE - save() returns the entity with a generated ID.
+    // Fails if: expected name differs from the saved one, or save() throws (e.g. missing required field).
     @Test
     @DisplayName("TC-C2: Save new cleaner")
     void testSaveNewCleaner() {
@@ -44,6 +55,9 @@ class CleanerRepositoryTest {
         assertThat(saved.getFirstName()).isEqualTo("John");
     }
 
+    // Checks: READ - a cleaner can be found by its ID.
+    // Note: returns early (passes silently) if the table is empty.
+    // Fails if: findById is given an ID that does not exist.
     @Test
     @DisplayName("TC-C3: Find cleaner by ID")
     void testFindById() {
@@ -57,6 +71,8 @@ class CleanerRepositoryTest {
         assertThat(found.get().getCleanerId()).isEqualTo(cleanerId);
     }
 
+    // Checks: UPDATE - save() on an existing cleaner changes the phone number.
+    // Fails if: expected phone is changed (e.g. '555-0301').
     @Test
     @DisplayName("TC-C4: Update cleaner")
     void testUpdateCleaner() {
@@ -73,6 +89,8 @@ class CleanerRepositoryTest {
         assertThat(updated.getPhone()).isEqualTo("555-0300");
     }
 
+    // Checks: DELETE - after deleteById the cleaner is gone.
+    // Fails if: the deleteById line is removed (cleaner would still exist).
     @Test
     @DisplayName("TC-C5: Delete cleaner")
     void testDeleteCleaner() {
@@ -90,6 +108,8 @@ class CleanerRepositoryTest {
         assertThat(deleted).isEmpty();
     }
 
+    // Checks: data quality - every cleaner has non-blank first/last name and an active flag.
+    // Fails if: a seeded cleaner has a blank name or null active flag.
     @Test
     @DisplayName("TC-C6: Cleaner has valid names")
     void testValidNames() {

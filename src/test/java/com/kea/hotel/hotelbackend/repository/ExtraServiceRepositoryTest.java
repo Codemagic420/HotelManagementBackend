@@ -14,6 +14,13 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * CRUD tests for ExtraServiceRepository (hotel extras like spa, breakfast).
+ * TYPE: integration test (real repository + in-memory H2 DB, no mocks).
+ * HOW: @SpringBootTest loads the app; @Transactional rolls back after every test, so created rows never leak.
+ * Seed data (cleaners, rooms, ...) comes from DataInitializer, which runs at startup.
+ * BREAK IT: change an expected value, or make a seeded service have price 0 (TC-ES6 fails).
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -22,6 +29,8 @@ class ExtraServiceRepositoryTest {
     @Autowired
     private ExtraServiceRepository extraServiceRepository;
 
+    // Checks: seeded extra services exist.
+    // Fails if: table is empty.
     @Test
     @DisplayName("TC-ES1: Find all extra services")
     void testFindAll() {
@@ -29,6 +38,8 @@ class ExtraServiceRepositoryTest {
         assertThat(services).isNotNull().isNotEmpty();
     }
 
+    // Checks: CREATE - saved service gets an ID and keeps its name.
+    // Fails if: expected name differs, or save() throws.
     @Test
     @DisplayName("TC-ES2: Save new extra service")
     void testSaveNewService() {
@@ -45,6 +56,8 @@ class ExtraServiceRepositoryTest {
         assertThat(saved.getName()).isEqualTo("Unique Extra Service");
     }
 
+    // Checks: READ by ID.
+    // Note: returns early (passes silently) if the table is empty.
     @Test
     @DisplayName("TC-ES3: Find service by ID")
     void testFindById() {
@@ -58,6 +71,9 @@ class ExtraServiceRepositoryTest {
         assertThat(found.get().getExtraServiceId()).isEqualTo(serviceId);
     }
 
+    // Checks: UPDATE - unit price changes from 75.00 to 85.00.
+    // isEqualByComparingTo compares BigDecimal by value (85.0 == 85.00).
+    // Fails if: expected price is changed.
     @Test
     @DisplayName("TC-ES4: Update extra service")
     void testUpdateService() {
@@ -74,6 +90,8 @@ class ExtraServiceRepositoryTest {
         assertThat(updated.getUnitPrice()).isEqualByComparingTo(new BigDecimal("85.00"));
     }
 
+    // Checks: DELETE - service is gone after deleteById.
+    // Fails if: the deleteById line is removed.
     @Test
     @DisplayName("TC-ES5: Delete extra service")
     void testDeleteService() {
@@ -91,6 +109,8 @@ class ExtraServiceRepositoryTest {
         assertThat(deleted).isEmpty();
     }
 
+    // Checks: every service has price > 0 and non-blank name/price unit.
+    // Fails if: any seeded service has price 0 or a blank name.
     @Test
     @DisplayName("TC-ES6: Extra service has valid price")
     void testValidPrice() {

@@ -10,6 +10,13 @@ import org.springframework.test.context.TestPropertySource;
 
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Tests of JwtTokenProvider (creates and checks JWT login tokens).
+ * TYPE: integration test - uses the real Spring bean, no mocks.
+ * @TestPropertySource fixes the secret key and expiry (24h) so results are predictable.
+ * A JWT = header.payload.signature; the signature is made with the secret key.
+ * BREAK IT: change an expected username, change the secret between create and validate, or break validateToken().
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(properties = {
@@ -30,6 +37,8 @@ class JwtTokenProviderTest {
         testUsername = "testuser";
     }
 
+    // Checks: a token is created and has 3 dot-separated parts.
+    // Fails if: generateTokenFromUsername returns null/blank or a non-JWT format.
     @Test
     @DisplayName("Should generate valid JWT token")
     void testGenerateToken() {
@@ -39,6 +48,8 @@ class JwtTokenProviderTest {
         assertThat(testToken.split("\\.")).hasSize(3); // JWT has 3 parts
     }
 
+    // Checks: the username put in the token comes back out unchanged (round trip).
+    // Fails if: the subject claim is not set to the username.
     @Test
     @DisplayName("Should extract username from valid token")
     void testGetUsernameFromToken() {
@@ -49,6 +60,8 @@ class JwtTokenProviderTest {
         assertThat(extractedUsername).isEqualTo(testUsername);
     }
 
+    // Checks: a freshly made token is valid.
+    // Fails if: wrong secret/expiry config makes valid tokens look invalid.
     @Test
     @DisplayName("Should validate token successfully")
     void testValidateToken() {
@@ -59,6 +72,8 @@ class JwtTokenProviderTest {
         assertThat(isValid).isTrue();
     }
 
+    // Checks: 'invalid.token.here' is rejected (false), no exception thrown.
+    // Fails if: validateToken throws instead of returning false, or accepts garbage.
     @Test
     @DisplayName("Should reject invalid token")
     void testValidateInvalidToken() {
@@ -69,16 +84,18 @@ class JwtTokenProviderTest {
         assertThat(isValid).isFalse();
     }
 
+    // WEAK/PLACEHOLDER: only checks a token is created; it does NOT test expiry.
+    // To test for real: set app.jwt.expiration=1, wait, then expect validateToken == false.
     @Test
     @DisplayName("Should reject expired token")
     void testExpiredToken() {
-        // This test would require mocking time or creating an expired token
-        // For now, verify the token has expiration time
         testToken = jwtTokenProvider.generateTokenFromUsername(testUsername);
 
         assertThat(testToken).isNotNull();
     }
 
+    // Checks: 'malformed' (not 3 parts) is rejected (false).
+    // Fails if: validateToken accepts or throws on malformed input.
     @Test
     @DisplayName("Should reject malformed token")
     void testMalformedToken() {
@@ -89,6 +106,8 @@ class JwtTokenProviderTest {
         assertThat(isValid).isFalse();
     }
 
+    // Checks: user1 and user2 get different tokens, each with their own name inside.
+    // Fails if: the token ignores the username.
     @Test
     @DisplayName("Should generate different tokens for different usernames")
     void testDifferentTokensForDifferentUsers() {
@@ -100,6 +119,8 @@ class JwtTokenProviderTest {
         assertThat(jwtTokenProvider.getUsernameFromToken(token2)).isEqualTo("user2");
     }
 
+    // Checks: edge case - '.', '+', '@' in the username survive the round trip.
+    // Fails if: the username is encoded or truncated.
     @Test
     @DisplayName("Should handle special characters in username")
     void testSpecialCharactersInUsername() {

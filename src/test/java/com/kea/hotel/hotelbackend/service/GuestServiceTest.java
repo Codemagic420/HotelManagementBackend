@@ -18,6 +18,13 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests of GuestService.
+ * TYPE: pure UNIT test. No Spring, no DB: the repository is a Mockito @Mock, the service is @InjectMocks.
+ * PATTERN: Arrange (when(...).thenReturn) -> Act (call service) -> Assert (AssertJ) + verify() calls on the mock.
+ * MockitoExtension is strict: a stub that is never used fails the test (UnnecessaryStubbingException).
+ * BREAK IT: change a stubbed return value or expected value, or make the service skip the repository call (verify fails).
+ */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("GuestService Unit Tests")
 class GuestServiceTest {
@@ -30,6 +37,7 @@ class GuestServiceTest {
 
     private Guest testGuest;
 
+    // Arrange: build a sample guest (Jane Smith) reused by every test.
     @BeforeEach
     void setUp() {
         testGuest = new Guest();
@@ -41,6 +49,8 @@ class GuestServiceTest {
         testGuest.setCreditCardLast4("4242");
     }
 
+    // Checks: service returns what the repository returns (2 guests) and calls findAll() exactly once.
+    // Fails if: service doesn't call the repository, or calls it twice (times(1)).
     @Test
     @DisplayName("Should retrieve all guests")
     void testFindAll() {
@@ -58,6 +68,8 @@ class GuestServiceTest {
         verify(guestRepository, times(1)).findAll();
     }
 
+    // Checks: found guest comes back with the right first/last name.
+    // Fails if: service looks up the wrong ID (stub is for ID 1) or returns empty.
     @Test
     @DisplayName("Should retrieve guest by ID")
     void testFindById() {
@@ -76,6 +88,8 @@ class GuestServiceTest {
                 });
     }
 
+    // Checks: saved guest keeps email and phone.
+    // Fails if: service doesn't pass the guest to repository.save().
     @Test
     @DisplayName("Should save guest successfully")
     void testSave() {
@@ -89,6 +103,8 @@ class GuestServiceTest {
                 .containsExactly("jane@example.com", "555-1234");
     }
 
+    // WEAK: tests the Guest setter/getter and a '@' check in the test itself.
+    // It does NOT test any service validation, so it passes whatever the service does.
     @Test
     @DisplayName("Should validate email format")
     void testEmailValidation() {
@@ -99,6 +115,8 @@ class GuestServiceTest {
         assertThat(testGuest.getEmail()).doesNotContain("@");
     }
 
+    // WEAK: checks the model stores exactly 4 digits (only 'last 4' of the card, PCI idea).
+    // Does not stop a longer number from being set; fails only if the getter/setter breaks.
     @Test
     @DisplayName("Should store only last 4 credit card digits")
     void testCreditCardPCICompliance() {
@@ -109,6 +127,9 @@ class GuestServiceTest {
         assertThat(testGuest.getCreditCardLast4()).isEqualTo("0000");
     }
 
+    // Checks: update(1, newData) finds the guest, saves, and returns the updated name/phone.
+    // Note: the mocked save() returns updatedGuest, so the result mostly reflects the stub.
+    // Fails if: the service doesn't call findById/save (strict stubs complain).
     @Test
     @DisplayName("Should update guest information")
     void testUpdateGuest() {
@@ -130,6 +151,8 @@ class GuestServiceTest {
                 });
     }
 
+    // Checks: delete(1) calls repository.deleteById(1) exactly once.
+    // Fails if: the service doesn't delete or uses another ID.
     @Test
     @DisplayName("Should delete guest successfully")
     void testDelete() {
@@ -140,6 +163,7 @@ class GuestServiceTest {
         verify(guestRepository, times(1)).deleteById(1L);
     }
 
+    // WEAK: only checks the test's own sample data has names; no service code involved.
     @Test
     @DisplayName("Should require first and last name")
     void testNameValidation() {
@@ -147,6 +171,8 @@ class GuestServiceTest {
         assertThat(testGuest.getLastName()).isNotBlank();
     }
 
+    // Checks: a Guest can be created without phone (phone is null).
+    // Model test only; fails if the Guest constructor sets a default phone.
     @Test
     @DisplayName("Should handle optional phone number")
     void testPhoneNumberOptional() {

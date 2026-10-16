@@ -13,6 +13,13 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * CRUD tests for RoomTypeRepository (Single, Double, Suite).
+ * TYPE: integration test (real repository + in-memory H2 DB, no mocks).
+ * HOW: @SpringBootTest loads the app; @Transactional rolls back after every test, so created rows never leak.
+ * Seed data (cleaners, rooms, ...) comes from DataInitializer, which runs at startup.
+ * BREAK IT: change an expected value, or seed a type with maxOccupancy 0 (TC-RT6 fails).
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
@@ -21,6 +28,8 @@ class RoomTypeRepositoryTest {
     @Autowired
     private RoomTypeRepository roomTypeRepository;
 
+    // Checks: seeded room types exist.
+    // Fails if: table is empty.
     @Test
     @DisplayName("TC-RT1: Find all room types")
     void testFindAll() {
@@ -28,6 +37,8 @@ class RoomTypeRepositoryTest {
         assertThat(types).isNotNull().isNotEmpty();
     }
 
+    // Checks: CREATE - saved type gets an ID and keeps its name.
+    // Fails if: expected name differs, or save() throws.
     @Test
     @DisplayName("TC-RT2: Save new room type")
     void testSaveNewType() {
@@ -42,6 +53,8 @@ class RoomTypeRepositoryTest {
         assertThat(saved.getName()).isEqualTo("Unique Penthouse");
     }
 
+    // Checks: READ by ID.
+    // Note: returns early (passes silently) if the table is empty.
     @Test
     @DisplayName("TC-RT3: Find room type by ID")
     void testFindById() {
@@ -55,6 +68,8 @@ class RoomTypeRepositoryTest {
         assertThat(found.get().getRoomTypeId()).isEqualTo(typeId);
     }
 
+    // Checks: UPDATE - max occupancy changes from 1 to 2.
+    // Fails if: expected occupancy is changed.
     @Test
     @DisplayName("TC-RT4: Update room type")
     void testUpdateType() {
@@ -69,6 +84,8 @@ class RoomTypeRepositoryTest {
         assertThat(updated.getMaxOccupancy()).isEqualTo(2);
     }
 
+    // Checks: DELETE - type is gone after deleteById.
+    // Fails if: the deleteById line is removed.
     @Test
     @DisplayName("TC-RT5: Delete room type")
     void testDeleteType() {
@@ -84,6 +101,8 @@ class RoomTypeRepositoryTest {
         assertThat(deleted).isEmpty();
     }
 
+    // Checks: every type has maxOccupancy > 0 and a non-blank name.
+    // Fails if: a seeded type has occupancy 0 or a blank name.
     @Test
     @DisplayName("TC-RT6: Room type has valid occupancy")
     void testValidOccupancy() {

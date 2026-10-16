@@ -21,6 +21,13 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests of ReservationService.
+ * TYPE: pure UNIT test. No Spring, no DB: the repository is a Mockito @Mock, the service is @InjectMocks.
+ * PATTERN: Arrange (when(...).thenReturn) -> Act (call service) -> Assert (AssertJ) + verify() calls on the mock.
+ * MockitoExtension is strict: a stub that is never used fails the test (UnnecessaryStubbingException).
+ * BREAK IT: change a stubbed return value or expected value, or make the service skip the repository call (verify fails).
+ */
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ReservationService Unit Tests")
 class ReservationServiceTest {
@@ -35,6 +42,7 @@ class ReservationServiceTest {
     private RoomType testRoomType;
     private Guest testGuest;
 
+    // Arrange: build a Suite room type (max 4 guests), a guest, and reservation RES001 (5 nights, 150/night, CONFIRMED).
     @BeforeEach
     void setUp() {
         testRoomType = new RoomType();
@@ -61,6 +69,8 @@ class ReservationServiceTest {
         testReservation.setStatus("CONFIRMED");
     }
 
+    // Checks: returns both reservations and calls findAll() once.
+    // Fails if: service doesn't use the repository.
     @Test
     @DisplayName("Should retrieve all reservations")
     void testFindAll() {
@@ -76,6 +86,8 @@ class ReservationServiceTest {
         verify(reservationRepository, times(1)).findAll();
     }
 
+    // Checks: reservation 1 comes back with reference RES001 and status CONFIRMED.
+    // Fails if: stubbed data or expected values differ.
     @Test
     @DisplayName("Should retrieve reservation by ID")
     void testFindById() {
@@ -91,6 +103,8 @@ class ReservationServiceTest {
                 });
     }
 
+    // Checks: saved reservation keeps reference, number of guests and nights.
+    // Fails if: service doesn't pass it to repository.save() or expected values change.
     @Test
     @DisplayName("Should save new reservation successfully")
     void testSave() {
@@ -104,6 +118,9 @@ class ReservationServiceTest {
                 .containsExactly("RES001", 2, 5);
     }
 
+    // Boundary values: 1, 4 and 7 nights (shortest stay, normal, a week).
+    // WEAK: nights are set by the test itself, so the service calculation is not tested.
+    // Fails if: check-out is not after check-in or expected nights differ.
     @ParameterizedTest
     @CsvSource({
             "2024-06-01,2024-06-02,1",
@@ -121,6 +138,8 @@ class ReservationServiceTest {
         assertThat(res.getNights()).isEqualTo(expectedNights);
     }
 
+    // WEAK: loops over valid statuses and checks the setter stores them.
+    // Does not check that invalid statuses are rejected.
     @Test
     @DisplayName("Should validate reservation status values")
     void testReservationStatusValidation() {
@@ -132,6 +151,9 @@ class ReservationServiceTest {
         }
     }
 
+    // State change: update(1, ...) moves CONFIRMED -> CHECKED_IN.
+    // Note: mocked save() returns updatedRes, so the result mostly reflects the stub.
+    // Fails if: service doesn't call findById/save.
     @Test
     @DisplayName("Should update reservation status")
     void testUpdateReservationStatus() {
@@ -150,6 +172,8 @@ class ReservationServiceTest {
                 .hasValueSatisfying(res -> assertThat(res.getStatus()).isEqualTo("CHECKED_IN"));
     }
 
+    // Boundary: 4 guests = max allowed (ok), 5 guests = over the limit.
+    // WEAK: the test compares numbers itself; the service doesn't enforce the rule here.
     @Test
     @DisplayName("Should validate room occupancy doesn't exceed max")
     void testOccupancyValidation() {
@@ -161,6 +185,8 @@ class ReservationServiceTest {
         assertThat(testReservation.getNumGuests()).isGreaterThan(testRoomType.getMaxOccupancy());
     }
 
+    // Checks: total = nightly price x nights (150.00 x 5 = 750.00).
+    // WEAK: calculation is done inside the test, not by a service method.
     @Test
     @DisplayName("Should calculate total reservation price correctly")
     void testTotalReservationPrice() {
@@ -177,6 +203,8 @@ class ReservationServiceTest {
         assertThat(actualTotal).isEqualByComparingTo(expectedTotal);
     }
 
+    // Checks: dates set to tomorrow..+5 days are in the future and check-out is after check-in.
+    // WEAK: only checks the test's own dates; no service rule is tested.
     @Test
     @DisplayName("Should handle future date validation")
     void testFutureDateValidation() {
@@ -188,6 +216,8 @@ class ReservationServiceTest {
         assertThat(testReservation.getCheckOutDate()).isAfter(testReservation.getCheckInDate());
     }
 
+   // Checks: delete(1) calls repository.deleteById(1) exactly once.
+   // Fails if: the service doesn't delete or uses another ID.
    @Test
     @DisplayName("Should delete reservation successfully")
     void testDelete() {

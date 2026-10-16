@@ -22,6 +22,12 @@ import java.net.URL;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * END-TO-END (UI) tests: a real headless Chrome (Selenium) opens the running app's Swagger UI.
+ * HOW: @SpringBootTest(RANDOM_PORT) starts the real server; WebDriverManager downloads a matching ChromeDriver.
+ * REQUIRES: Chrome installed + internet for the driver download.
+ * BREAK IT: disable Swagger (springdoc.swagger-ui.enabled=false), rename a controller/tag, or expect a word that is not on the page.
+ */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DisplayName("E2E: Complete Booking Flow")
@@ -35,6 +41,7 @@ class BookingFlowE2EIntegrationTest {
     private WebDriver driver;
     private WebDriverWait wait;
 
+    // Starts headless Chrome with a 20 s explicit wait before each test.
     @BeforeEach
     void setUp() {
         // Use WebDriverManager to ensure compatible ChromeDriver is available
@@ -45,6 +52,7 @@ class BookingFlowE2EIntegrationTest {
         wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
+    // Closes the browser after each test so Chrome processes don't pile up.
     @AfterEach
     void tearDown() {
         if (driver != null) {
@@ -52,14 +60,18 @@ class BookingFlowE2EIntegrationTest {
         }
     }
 
+    // Checks: Swagger page loads (title has Swagger/Explore) and /v3/api-docs lists auth, room, reservation.
+    // Fallback: if the HTTP call itself throws, it reads the page text instead (assertion errors are NOT swallowed).
+    // Note: despite the name, it does not perform a booking - it only checks the API docs.
+    // Fails if: Swagger is off, or the API docs lose those controllers.
     @Test
     @DisplayName("Should complete full booking flow: auth -> search rooms -> create reservation -> view bill")
     void testCompleteBookingFlow() {
-        // Step 1: Navigate to application
+        // Step 1: Open Swagger UI in the browser
         driver.get(getBaseUrl() + "/swagger-ui.html");
         assertThat(driver.getTitle()).matches(".*(Swagger|Explore).*");
 
-        // Step 2: Verify API endpoints are accessible by fetching the OpenAPI JSON directly (more deterministic)
+        // Step 2: Fetch the OpenAPI JSON over plain HTTP (more reliable than reading the rendered page)
         try {
             URL u = new URL(getBaseUrl() + "/v3/api-docs");
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();
@@ -73,7 +85,7 @@ class BookingFlowE2EIntegrationTest {
             String lower = apiJson.toLowerCase();
             assertThat(lower).contains("auth").contains("room").contains("reservation");
         } catch (Exception ex) {
-            // If HTTP check fails, fall back to checking the rendered page body text
+            // If the HTTP call throws (e.g. connection error), fall back to the rendered page text
             String bodyText = wait.until(d -> {
                 try {
                     String t = d.findElement(By.tagName("body")).getText();
@@ -87,6 +99,9 @@ class BookingFlowE2EIntegrationTest {
         }
     }
 
+    // Checks: Swagger page opens without login (URL contains 'swagger-ui') and the body has text.
+    // WEAK: it never calls /api/rooms, so it cannot prove rooms are public.
+    // Fails if: Swagger redirects to a login page or is blank.
     @Test
     @DisplayName("Should access public API endpoints without authentication")
     void testPublicAPIAccess() {
@@ -96,17 +111,20 @@ class BookingFlowE2EIntegrationTest {
         // Verify API documentation loads
         assertThat(driver.getCurrentUrl()).contains("swagger-ui");
 
-        // Rooms endpoint should be accessible without auth
+        // Page body must contain some text (this does not call /api/rooms itself)
         WebElement rolesText = driver.findElement(By.tagName("body"));
         assertThat(rolesText.getText()).isNotEmpty();
     }
 
+    // Checks: after the page header is visible, the text mentions auth, room, guest, reservation, bill.
+    // Text match is case-sensitive.
+    // Fails if: a controller is removed/renamed or Swagger shows different tag names.
     @Test
     @DisplayName("Should show API endpoints organization")
     void testAPIEndpointsOrganization() {
         driver.get(getBaseUrl() + "/swagger-ui.html");
 
-        // Wait for page to fully load
+        // Wait until the Swagger header is visible (page finished rendering)
         wait.until(d -> {
             try {
                 var els = d.findElements(By.cssSelector(".topbar-title, .swagger-ui .topbar, .swagger-ui .title, .swagger-ui .info h1"));
@@ -118,7 +136,7 @@ class BookingFlowE2EIntegrationTest {
             return null;
         });
 
-        // Verify major endpoint groups
+        // Each major API group must appear in the page text (case-sensitive)
         String pageText = driver.findElement(By.tagName("body")).getText();
 
         assertThat(pageText).contains("auth");
@@ -128,15 +146,17 @@ class BookingFlowE2EIntegrationTest {
         assertThat(pageText).contains("bill");
     }
 
+    // WEAK: only checks the page source is not empty and the body element exists.
+    // Fails only if the page does not load at all.
     @Test
     @DisplayName("Should verify API works with HTTP status codes")
     void testAPIStatusCodes() {
         driver.get(getBaseUrl() + "/swagger-ui.html");
 
-        // Verify Swagger loads successfully (200 OK)
+        // Page source must not be empty (page loaded)
         assertThat(driver.getPageSource()).isNotEmpty();
 
-        // Check for response examples in documentation
+        // Page body element must exist
         WebElement body = driver.findElement(By.tagName("body"));
         assertThat(body).isNotNull();
     }
