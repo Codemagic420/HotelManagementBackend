@@ -17,7 +17,7 @@ public class SwaggerConfig {
                 .info(new Info()
                         .title("Hotel Management API")
                         .version("v1")
-                        .description("Hotel Havneglæde — paste your token in the Authorize button"))
+                        .description("Hotel Costa Solène — paste your token in the Authorize button"))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer"))
                 .components(new Components()
                         .addSecuritySchemes("Bearer", new SecurityScheme()

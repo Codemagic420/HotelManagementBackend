@@ -155,6 +155,9 @@ services:
       # Docker-internal overrides — these win over .env values
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
+      # application.properties hardcodes localhost for host-side runs; inside the
+      # compose network Mongo is at host "mongodb", so override the whole URI here.
+      SPRING_MONGODB_URI: mongodb://admin:admin123@mongodb:27017/hotel_db?authSource=admin
       NEO4J_URI: bolt://neo4j:7687
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       LLM_BASE_URL: http://llm:8000
@@ -177,8 +180,8 @@ services:
   # ============================================
   llm:
     build:
-      context: ../../hotellmm/Hotel-LLM-Assistant
-      dockerfile: Dockerfile
+      context: ../Hotel-LLM-Assistant
+      dockerfile: backend/Dockerfile
     container_name: hotel_llm_container
     ports:
       - "8000:8000"
@@ -186,7 +189,7 @@ services:
       STAFF_API_BASE_URL: http://backend:8080
       OLLAMA_BASE_URL: http://host.docker.internal:11434
     volumes:
-      - ../../hotellmm/Hotel-LLM-Assistant/chroma_db:/app/chroma_db
+      - ../Hotel-LLM-Assistant/chroma_db:/app/chroma_db
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
